@@ -14,7 +14,8 @@ echo "olá mundo!"
 
 ## Contato
 
-O repositório foi desenvolvido por: 
+O repositório foi desenvolvido por:
+ 
 Douglas  - github.com/namirso
 Juliano  - github.com/JulianoRoc
 Micael   - github.com/MicaelBernardi
