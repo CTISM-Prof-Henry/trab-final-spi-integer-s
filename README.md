@@ -16,9 +16,9 @@ echo "olá mundo!"
 
 O repositório foi desenvolvido por:
  
-Douglas  - github.com/namirso
-Juliano  - github.com/JulianoRoc
-Micael   - github.com/MicaelBernardi
+* Douglas  - (https://github.com/namirso)
+* Juliano  - (https://github.com/JulianoRoc)
+* Micael   - (https://github.com/MicaelBernardi)
 
 
 ## Bibliografia
