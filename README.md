@@ -2,7 +2,11 @@
 # Locação de Salas - Trabalho ENG SW II
 
 Trabalho sobre locação de salas - 
-Baseado na estrutura física do Colégio Politécnico da UFSM, este sistema prevê a criação de um sistema capaz de gerenciar salas.
+ Baseado na estrutura física do Colégio Politécnico da UFSM, este sistema prevê a criação de um sistema capaz de gerenciar salas.  <br>
+O sistema vai ser usado para guardar um registro de quando a chave de uma sala é alocada para um servidor(Professor, aluno, etc),
+guardando o horario de retirada da chave e tambem quando ela é devolvida. <br>
+Tambem é definido um horario limite para a devolucao da chave, e se chegado este horario nao for feita a devolucao sera enviado um email de aviso.
+
 
 ## Sumário
 
