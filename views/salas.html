@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salas - Agendamento</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Estilos Personalizados -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <!-- Cabeçalho (igual em todas as páginas) -->
+        <div class="navbar-top">
+            <div class="container-fluid d-flex align-items-center justify-content-between">
+                <div class="navbar-brand-container"><a class="navbar-brand" href="#"><i class="bi bi-door-open"></i></a></div>
+                <div class="centered-title-container text-center"><h1>SALAS</h1><span>Agendamento</span></div>
+                <div class="login-section d-flex align-items-center"><a href="#">login</a><span class="login-status-indicator"></span></div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="index.html">início</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">locações</a></li>
+                        <li class="nav-item"><a class="nav-link" href="agendamentos.html">agendamentos</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">salas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-4">
+        <!-- Cards de Informação e Ação -->
+        <div class="row justify-content-center g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card info-card shadow-sm">
+                    <div class="card-body">
+                        <h1 class="fw-bold text-success mb-0">67</h1>
+                        <p class="card-subtitle text-body-secondary mt-2">Salas Livres</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card info-card shadow-sm">
+                    <div class="card-body">
+                        <h1 class="fw-bold text-warning mb-0">20</h1>
+                        <p class="card-subtitle text-body-secondary mt-2">Salas em Uso</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card action-card shadow-sm">
+                    <a href="cadastro-sala.html" style="text-decoration: none;">
+                    <div class="card-body">
+                        <i class="bi bi-plus-circle"></i>
+                        <p class="card-subtitle text-body-secondary mt-2 fw-bold">Gerenciar Salas</p>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros e Tabela -->
+        <div class="content-box mt-5">
+            <div class="content-box-placeholder mb-4">
+                <p class="mb-0">filtros para seleção específica</p>
+            </div>
+            <div class="content-box-placeholder">
+                <p class="mb-0">tabela mostrando as salas livres(padrão)</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

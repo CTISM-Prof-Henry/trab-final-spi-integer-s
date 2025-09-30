@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salas - Agendamento</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">
+   
+<body>
+
+    <header>
+        <!-- Barra superior laranja com título e login -->
+        <div class="navbar-top">
+            <div class="container-fluid d-flex align-items-center justify-content-between">
+                <!-- Ícone da porta à esquerda -->
+                <div class="navbar-brand-container">
+                    <a class="navbar-brand" href="#">
+                        <i class="bi bi-door-open"></i>
+                    </a>
+                </div>
+
+                <!-- Título centralizado -->
+                <div class="centered-title-container text-center">
+                    <h1>SALAS</h1>
+                    <span>Agendamento</span>
+                </div>
+
+                <!-- Seção de Login à direita -->
+                <div class="login-section d-flex align-items-center">
+                    <a href="#">login</a>
+                    <span class="login-status-indicator"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra inferior azul com os links de navegação -->
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
+            <div class="container-fluid">
+                <!-- Botão Toggler para telas pequenas -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- Links de navegação -->
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.html">início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">locações</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="agendamentos.html">agendamentos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="salas.html">salas</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-4">
+        <div class="row justify-content-center g-4">
+            <!-- Card Salas em Uso -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card info-card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <h1 class="fw-bold text-success mb-0 me-3">8</h1>
+                        </div>
+                        <p class="card-subtitle text-body-secondary mt-2">Salas em Uso</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card Agendados de Hoje -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card info-card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <h1 class="fw-bold text-warning mb-0 me-3">23</h1>
+                        </div>
+                        <p class="card-subtitle text-body-secondary mt-2">Agendados de Hoje</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card Finalizadas Hoje -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card info-card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <h1 class="fw-bold text-danger mb-0 me-3">2</h1>
+                        </div>
+                        <p class="card-subtitle text-body-secondary mt-2">Finalizadas Hoje</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção do Gráfico de Salas em Uso -->
+        <div class="text-center my-4 pt-3">
+            <h1 class="section-title">Salas em Uso</h2>
+        </div>
+        <div class="chart-section-container">
+            <div class="chart-filters d-flex justify-content-center align-items-center mb-3">
+                <label for="block-select" class="me-2 fw-bold">Bloco</label>
+                <select class="form-select" id="block-select" style="width: auto;">
+                    <option selected>A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <div class="y-axis-label">Tarde</div>
+                <div class="timeline">
+                    <!-- Exemplo de salas em uso para o Bloco A -->
+                    <div class="usage-bar" style="left: 5%; width: 10%; background-color: #66c2a5;" title="Sala A101 - 13:30-14:30"></div>
+                    <div class="usage-bar" style="left: 17%; width: 15%; background-color: #8da0cb;" title="Sala A102 - 14:45-16:00"></div>
+                    <div class="usage-bar" style="left: 35%; width: 5%; background-color: #fc8d62;" title="Sala A103 - 16:15-16:45"></div>
+                    <div class="usage-bar" style="left: 42%; width: 8%; background-color: #66c2a5;" title="Sala A101 - 16:50-17:30"></div>
+                    <div class="usage-bar" style="left: 55%; width: 40%; background-color: #a6d854;" title="Sala A205 (Auditório) - 18:00-22:00"></div>
+                </div>
+            </div>
+            <div class="text-center mt-2 chart-footer">
+                <a href="#">clique para expandir</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
+
