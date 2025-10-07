@@ -1,17 +1,22 @@
-# Welcome to MkDocs
+# SALAS - Trabalho Engenharia de Software II
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+No SALAS, é possivel fazer o agendamento de salas para uso em uma universidade. <br>
+O usuário, seja ele docente ou terceirizado, poderá visualizar e realizar agendamentos. <br>
+O administrador do sistema, pode visualizar, editar e adicionar salas ao sistema.
 
-## Commands
+## Rodando o projeto
+A aplicação, base de dados e demais bibliotecas utilizadas estarão dentro de um container docker. <BR>
+Para executar o projeto, siga o passo a passo.
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+ 1. Instale o Docker. 
+    * https://docs.docker.com/desktop
+    
+ 2. Baixe o arquivo para instalação do projeto no repositório.
+    * repositório - https://github.com/CTISM-Prof-Henry/trab-final-spi-integer-s
+    * arquivo     - `docker-compose`
 
-## Project layout
+ 3. Execute o comando para rodar o arquivo, com um prompt de comando, no mesmo diretório que o arquivo recém baixado.
+    * comando - `docker-compose up -d`
+ 4. Acesse o projeto em seu navegador utilizando o link:
+    * https://localhost:8080
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
