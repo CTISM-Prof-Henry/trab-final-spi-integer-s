@@ -1,5 +1,6 @@
 package br.ufsm.csi.Salas.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Agendamento {
@@ -10,12 +11,12 @@ public class Agendamento {
     private Usuario usuario;
     private int status;
     private int turno;
-    private Date data;
+    private LocalDate data;
 
     public Agendamento() {
     }
 
-    public Agendamento(Integer id, Sala sala, Funcionario funcionario, Usuario usuario, int status, int turno, Date data) {
+    public Agendamento(Integer id, Sala sala, Funcionario funcionario, Usuario usuario, int status, int turno, LocalDate data) {
         this.id = id;
         this.sala = sala;
         this.funcionario = funcionario;
@@ -74,11 +75,11 @@ public class Agendamento {
         this.turno = turno;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 }
