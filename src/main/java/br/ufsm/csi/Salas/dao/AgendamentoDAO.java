@@ -6,6 +6,7 @@ import br.ufsm.csi.Salas.model.Sala;
 import br.ufsm.csi.Salas.model.Usuario;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class AgendamentoDAO {
@@ -59,12 +60,9 @@ public class AgendamentoDAO {
 
                 agendamentos.add(agendamento);
             }
-        } catch (SQLException e) {
-            System.out.println("Erro ao conectar");
-            e.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Driver não carregou");
-            ex.printStackTrace();
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao listar agendamentos");
         }
         return agendamentos;
     }
@@ -72,20 +70,77 @@ public class AgendamentoDAO {
     public String alterar(Agendamento agendamento) {
         try {
             Connection conn = ConectarBanco.conectarBancoPostgres();
-            PreparedStatement stmt = conn.prepareStatement("UPDATE funcionario SET nome = ?, email = ?, cpf = ? WHERE id = ?");
+            PreparedStatement stmt = conn.prepareStatement("UPDATE agendamento SET idsala = ?, idfunc = ?, idusuario = ?, status = ?, turno = ?, data = ? WHERE id = ?");
 
-            stmt.setString(1, funcionario.getNome());
-            stmt.setString(2, funcionario.getEmail());
-            stmt.setString(3, funcionario.getCpf());
-            stmt.setInt(4, funcionario.getId());
+            stmt.setInt(1, agendamento.getSala().getId());
+            stmt.setInt(2, agendamento.getFuncionario().getId());
+            stmt.setInt(3, agendamento.getUsuario().getId());
+            stmt.setInt(4, agendamento.getStatus());
+            stmt.setInt(5, agendamento.getTurno());
+            stmt.setDate(6, Date.valueOf(agendamento.getData()));
             stmt.execute();
 
         } catch (SQLException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
-            System.out.println("Erro ao alterar funcionário");
-            return "Erro ao alterar funcionário!";
+            System.out.println("Erro ao alterar Agendamento");
+            return "Erro ao alterar Agendamento!";
         }
-        return "Funcionário alterado com sucesso!";
+        return "Agendamento alterado com sucesso!";
+    }
+
+    public boolean excluir(int id) {
+        try {
+            Connection conn = ConectarBanco.conectarBancoPostgres();
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM agendamento WHERE id = ?");
+            stmt.setInt(1, id);
+            stmt.execute();
+
+            if (stmt.getUpdateCount() <= 0) {
+                return false;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao excluir Agendamento");
+            return false;
+        }
+        return true;
+    }
+
+    public ArrayList<Agendamento> buscarPorData(LocalDate data) {
+        ArrayList<Agendamento> agendamentos = new ArrayList<>();
+        try {
+            Connection conn = ConectarBanco.conectarBancoPostgres();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM agendamento where data = ? order by data ");
+            stmt.setDate(1, Date.valueOf(data));
+
+            stmt.execute();
+
+            while (stmt.getResultSet().next()) {
+                SalaDAO salaDAO = new SalaDAO();
+                Sala sala = salaDAO.buscar(stmt.getResultSet().getInt("idsala"));
+
+                FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
+                Funcionario funcionario = funcionarioDAO.buscar(stmt.getResultSet().getInt("idfunc"));
+
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                Usuario usuario = usuarioDAO.buscar(stmt.getResultSet().getInt("idusuario"));
+
+                Agendamento agendamento = new Agendamento();
+
+                agendamento.setSala(sala);
+                agendamento.setFuncionario(funcionario);
+                agendamento.setUsuario(usuario);
+                agendamento.setStatus(stmt.getResultSet().getInt("status"));
+                agendamento.setTurno(stmt.getResultSet().getInt("turno"));
+                agendamento.setData(stmt.getResultSet().getDate("data").toLocalDate());
+
+                agendamentos.add(agendamento);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao buscar agendamentos");
+        }
+        return agendamentos;
     }
 
 

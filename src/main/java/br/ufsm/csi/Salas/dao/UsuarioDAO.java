@@ -41,12 +41,9 @@ public class UsuarioDAO {
 
                 usuarios.add(usuario);
             }
-        } catch (SQLException e) {
-            System.out.println("Erro ao conectar");
-            e.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Driver não carregou");
-            ex.printStackTrace();
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao listar usuarios");
         }
         return usuarios;
     }
