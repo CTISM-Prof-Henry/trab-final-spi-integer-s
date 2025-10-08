@@ -18,4 +18,4 @@ O projeto foi desenvolvido por:
 
 Acesse a documentação e tutoriais de uso do projeto pelo link:
 
-* [Documentação](/docs/index.md)
+* [Documentação](https://CTISM-Prof-Henry.github.io/trab-final-spi-integer-s)
