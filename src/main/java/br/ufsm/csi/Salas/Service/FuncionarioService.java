@@ -35,4 +35,8 @@ public class FuncionarioService {
         return dao.buscar(id);
     }
 
+    public Funcionario buscar(String email) {
+        return dao.buscar(email);
+    }
+
 }

@@ -10,11 +10,12 @@ public class FuncionarioDAO {
     public String inserir(Funcionario funcionario) {
         try {
             Connection conn = ConectarBanco.conectarBancoPostgres();
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO funcionario (nome, email, cpf) VALUES (?, ?, ?)");
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO funcionario (nome, email, cpf, senha) VALUES (?, ?, ?, ?)");
 
             stmt.setString(1, funcionario.getNome());
             stmt.setString(2, funcionario.getEmail());
             stmt.setString(3, funcionario.getCpf());
+            stmt.setString(4, funcionario.getSenha());
             stmt.execute();
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -38,6 +39,7 @@ public class FuncionarioDAO {
                 funcionario.setNome(rs.getString("nome"));
                 funcionario.setEmail(rs.getString("email"));
                 funcionario.setCpf(rs.getString("cpf"));
+                funcionario.setSenha(rs.getString("senha"));
 
                 funcionarios.add(funcionario);
             }
@@ -51,12 +53,13 @@ public class FuncionarioDAO {
     public String alterar(Funcionario funcionario) {
         try {
             Connection conn = ConectarBanco.conectarBancoPostgres();
-            PreparedStatement stmt = conn.prepareStatement("UPDATE funcionario SET nome = ?, email = ?, cpf = ? WHERE id = ?");
+            PreparedStatement stmt = conn.prepareStatement("UPDATE funcionario SET nome = ?, email = ?, cpf = ?, senha = ? WHERE id = ?");
 
             stmt.setString(1, funcionario.getNome());
             stmt.setString(2, funcionario.getEmail());
             stmt.setString(3, funcionario.getCpf());
             stmt.setInt(4, funcionario.getId());
+            stmt.setString(5, funcionario.getSenha());
             stmt.execute();
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -98,6 +101,29 @@ public class FuncionarioDAO {
                 funcionario.setNome(rs.getString("nome"));
                 funcionario.setEmail(rs.getString("email"));
                 funcionario.setCpf(rs.getString("cpf"));
+                funcionario.setSenha(rs.getString("senha"));
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao buscar funcionário");
+        }
+        return funcionario;
+    }
+
+    public Funcionario buscar(String email) {
+        Funcionario funcionario = new Funcionario();
+        try {
+            Connection conn = ConectarBanco.conectarBancoPostgres();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM funcionario WHERE email = ?");
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                funcionario.setId(rs.getInt("id"));
+                funcionario.setNome(rs.getString("nome"));
+                funcionario.setEmail(rs.getString("email"));
+                funcionario.setCpf(rs.getString("cpf"));
+                funcionario.setSenha(rs.getString("senha"));
             }
         } catch (SQLException | ClassNotFoundException e) {
             System.out.println(e.getMessage());

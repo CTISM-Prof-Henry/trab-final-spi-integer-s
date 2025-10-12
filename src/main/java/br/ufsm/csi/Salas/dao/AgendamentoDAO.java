@@ -14,7 +14,7 @@ public class AgendamentoDAO {
     public String inserir(Agendamento agendamento) {
         try {
             Connection conn = ConectarBanco.conectarBancoPostgres();
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO agendamento (idsala, idfunc, idusuario, status, turno, data) VALUES (?, ?, ?, ?, ?, ?)");
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO agendamento (idsala, idfunc, idusuario, status, turno, data, datacadastro) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
             stmt.setInt(1, agendamento.getSala().getId());
             stmt.setInt(2, agendamento.getFuncionario().getId());
@@ -22,6 +22,7 @@ public class AgendamentoDAO {
             stmt.setInt(4, agendamento.getStatus());
             stmt.setInt(5, agendamento.getTurno());
             stmt.setDate(6, Date.valueOf(agendamento.getData()));
+            stmt.setDate(7, Date.valueOf(agendamento.getData()));
             stmt.execute();
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -70,7 +71,8 @@ public class AgendamentoDAO {
     public String alterar(Agendamento agendamento) {
         try {
             Connection conn = ConectarBanco.conectarBancoPostgres();
-            PreparedStatement stmt = conn.prepareStatement("UPDATE agendamento SET idsala = ?, idfunc = ?, idusuario = ?, status = ?, turno = ?, data = ? WHERE id = ?");
+            PreparedStatement stmt = conn.prepareStatement("UPDATE agendamento SET idsala = ?, idfunc = ?, " +
+                    "idusuario = ?, status = ?, turno = ?, data = ?, datacadastro = ? WHERE id = ?");
 
             stmt.setInt(1, agendamento.getSala().getId());
             stmt.setInt(2, agendamento.getFuncionario().getId());
@@ -78,6 +80,7 @@ public class AgendamentoDAO {
             stmt.setInt(4, agendamento.getStatus());
             stmt.setInt(5, agendamento.getTurno());
             stmt.setDate(6, Date.valueOf(agendamento.getData()));
+            stmt.setDate(7, Date.valueOf(agendamento.getData()));
             stmt.execute();
 
         } catch (SQLException | ClassNotFoundException e) {
