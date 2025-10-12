@@ -32,4 +32,8 @@ public class AgendamentoService {
     public ArrayList<Agendamento> buscarPorData(LocalDate data) {
         return dao.buscarPorData(data);
     }
+
+    public ArrayList<Agendamento> listarPorStatus(int i) {
+        return dao.listarPorStatus(i);
+    }
 }

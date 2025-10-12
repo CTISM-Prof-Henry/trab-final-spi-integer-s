@@ -58,6 +58,7 @@ public class AgendamentoDAO {
                 agendamento.setStatus(rs.getInt("status"));
                 agendamento.setTurno(rs.getInt("turno"));
                 agendamento.setData(rs.getDate("data").toLocalDate());
+                agendamento.setDatacadastro(rs.getDate("datacadastro").toLocalDate());
 
                 agendamentos.add(agendamento);
             }
@@ -136,6 +137,7 @@ public class AgendamentoDAO {
                 agendamento.setStatus(stmt.getResultSet().getInt("status"));
                 agendamento.setTurno(stmt.getResultSet().getInt("turno"));
                 agendamento.setData(stmt.getResultSet().getDate("data").toLocalDate());
+                agendamento.setDatacadastro(stmt.getResultSet().getDate("datacadastro").toLocalDate());
 
                 agendamentos.add(agendamento);
             }
@@ -147,4 +149,40 @@ public class AgendamentoDAO {
     }
 
 
+    public ArrayList<Agendamento> listarPorStatus(int i) {
+        ArrayList<Agendamento> agendamentos = new ArrayList<>();
+        try {
+            Connection conn = ConectarBanco.conectarBancoPostgres();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM agendamento WHERE status = ? ORDER BY data");
+            stmt.setInt(1, i);
+            stmt.execute();
+
+            while (stmt.getResultSet().next()) {
+                SalaDAO salaDAO = new SalaDAO();
+                Sala sala = salaDAO.buscar(stmt.getResultSet().getInt("idsala"));
+
+                FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
+                Funcionario funcionario = funcionarioDAO.buscar(stmt.getResultSet().getInt("idfunc"));
+
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                Usuario usuario = usuarioDAO.buscar(stmt.getResultSet().getInt("idusuario"));
+
+                Agendamento agendamento = new Agendamento();
+
+                agendamento.setSala(sala);
+                agendamento.setFuncionario(funcionario);
+                agendamento.setUsuario(usuario);
+                agendamento.setStatus(stmt.getResultSet().getInt("status"));
+                agendamento.setTurno(stmt.getResultSet().getInt("turno"));
+                agendamento.setData(stmt.getResultSet().getDate("data").toLocalDate());
+                agendamento.setDatacadastro(stmt.getResultSet().getDate("datacadastro").toLocalDate());
+
+                agendamentos.add(agendamento);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao listar agendamentos");
+        }
+        return agendamentos;
+    }
 }
