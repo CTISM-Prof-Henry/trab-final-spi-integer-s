@@ -5,7 +5,7 @@
 -- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.5
 
--- Started on 2025-09-30 21:48:52
+-- Started on 2025-10-13 21:22:45
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -25,10 +25,10 @@ SET default_table_access_method = heap;
 
 --
 -- TOC entry 217 (class 1259 OID 16828)
--- Name: Sala; Type: TABLE; Schema: public; Owner: postgres
+-- Name: sala; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."Sala" (
+CREATE TABLE public.sala (
     id bigint NOT NULL,
     tipo character varying(50) NOT NULL,
     capacidade integer NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE public."Sala" (
 );
 
 
-ALTER TABLE public."Sala" OWNER TO postgres;
+ALTER TABLE public.sala OWNER TO postgres;
 
 --
 -- TOC entry 218 (class 1259 OID 16831)
@@ -59,7 +59,7 @@ ALTER SEQUENCE public."Sala_id_seq" OWNER TO postgres;
 -- Name: Sala_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."Sala_id_seq" OWNED BY public."Sala".id;
+ALTER SEQUENCE public."Sala_id_seq" OWNED BY public.sala.id;
 
 
 --
@@ -74,7 +74,8 @@ CREATE TABLE public.agendamento (
     idsala integer,
     status integer,
     turno integer,
-    data date
+    data date,
+    datacadastro date
 );
 
 
@@ -114,7 +115,8 @@ CREATE TABLE public.funcionario (
     nome character varying NOT NULL,
     email character varying NOT NULL,
     cpf character varying NOT NULL,
-    permissao integer NOT NULL
+    permissao integer NOT NULL,
+    senha character varying(50) NOT NULL
 );
 
 
@@ -184,14 +186,6 @@ ALTER SEQUENCE public.usuario_id_seq OWNED BY public.usuario.id;
 
 
 --
--- TOC entry 4656 (class 2604 OID 16846)
--- Name: Sala id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Sala" ALTER COLUMN id SET DEFAULT nextval('public."Sala_id_seq"'::regclass);
-
-
---
 -- TOC entry 4657 (class 2604 OID 16847)
 -- Name: agendamento id; Type: DEFAULT; Schema: public; Owner: postgres
 --
@@ -208,6 +202,14 @@ ALTER TABLE ONLY public.funcionario ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- TOC entry 4656 (class 2604 OID 16846)
+-- Name: sala id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sala ALTER COLUMN id SET DEFAULT nextval('public."Sala_id_seq"'::regclass);
+
+
+--
 -- TOC entry 4659 (class 2604 OID 16849)
 -- Name: usuario id; Type: DEFAULT; Schema: public; Owner: postgres
 --
@@ -216,22 +218,12 @@ ALTER TABLE ONLY public.usuario ALTER COLUMN id SET DEFAULT nextval('public.usua
 
 
 --
--- TOC entry 4816 (class 0 OID 16828)
--- Dependencies: 217
--- Data for Name: Sala; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Sala" (id, tipo, capacidade, bloco) FROM stdin;
-\.
-
-
---
 -- TOC entry 4818 (class 0 OID 16832)
 -- Dependencies: 219
 -- Data for Name: agendamento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.agendamento (id, idusuario, idfunc, idsala, status, turno, data) FROM stdin;
+COPY public.agendamento (id, idusuario, idfunc, idsala, status, turno, data, datacadastro) FROM stdin;
 \.
 
 
@@ -241,7 +233,18 @@ COPY public.agendamento (id, idusuario, idfunc, idsala, status, turno, data) FRO
 -- Data for Name: funcionario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.funcionario (id, nome, email, cpf, permissao) FROM stdin;
+COPY public.funcionario (id, nome, email, cpf, permissao, senha) FROM stdin;
+1	teste	t@1	111111	1	1
+\.
+
+
+--
+-- TOC entry 4816 (class 0 OID 16828)
+-- Dependencies: 217
+-- Data for Name: sala; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.sala (id, tipo, capacidade, bloco) FROM stdin;
 \.
 
 
@@ -293,10 +296,10 @@ SELECT pg_catalog.setval('public.usuario_id_seq', 1, false);
 
 --
 -- TOC entry 4661 (class 2606 OID 16851)
--- Name: Sala Sala_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: sala Sala_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Sala"
+ALTER TABLE ONLY public.sala
     ADD CONSTRAINT "Sala_pkey" PRIMARY KEY (id);
 
 
@@ -342,7 +345,7 @@ ALTER TABLE ONLY public.agendamento
 --
 
 ALTER TABLE ONLY public.agendamento
-    ADD CONSTRAINT fk_agendamento_sala FOREIGN KEY (idsala) REFERENCES public."Sala"(id) NOT VALID;
+    ADD CONSTRAINT fk_agendamento_sala FOREIGN KEY (idsala) REFERENCES public.sala(id) NOT VALID;
 
 
 --
@@ -354,7 +357,7 @@ ALTER TABLE ONLY public.agendamento
     ADD CONSTRAINT fk_agendamento_usuario FOREIGN KEY (idusuario) REFERENCES public.usuario(id) NOT VALID;
 
 
--- Completed on 2025-09-30 21:48:52
+-- Completed on 2025-10-13 21:22:45
 
 --
 -- PostgreSQL database dump complete
