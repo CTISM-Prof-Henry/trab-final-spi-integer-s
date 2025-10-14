@@ -5,7 +5,7 @@
 -- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.5
 
--- Started on 2025-10-13 21:22:45
+-- Started on 2025-10-13 21:27:48
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -223,8 +223,6 @@ ALTER TABLE ONLY public.usuario ALTER COLUMN id SET DEFAULT nextval('public.usua
 -- Data for Name: agendamento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.agendamento (id, idusuario, idfunc, idsala, status, turno, data, datacadastro) FROM stdin;
-\.
 
 
 --
@@ -233,9 +231,7 @@ COPY public.agendamento (id, idusuario, idfunc, idsala, status, turno, data, dat
 -- Data for Name: funcionario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.funcionario (id, nome, email, cpf, permissao, senha) FROM stdin;
-1	teste	t@1	111111	1	1
-\.
+INSERT INTO public.funcionario (id, nome, email, cpf, permissao, senha) VALUES (1, 'teste', 't@1', '111111', 1, '1');
 
 
 --
@@ -244,8 +240,6 @@ COPY public.funcionario (id, nome, email, cpf, permissao, senha) FROM stdin;
 -- Data for Name: sala; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.sala (id, tipo, capacidade, bloco) FROM stdin;
-\.
 
 
 --
@@ -254,8 +248,6 @@ COPY public.sala (id, tipo, capacidade, bloco) FROM stdin;
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.usuario (id, nome, email, matricula) FROM stdin;
-\.
 
 
 --
@@ -357,7 +349,7 @@ ALTER TABLE ONLY public.agendamento
     ADD CONSTRAINT fk_agendamento_usuario FOREIGN KEY (idusuario) REFERENCES public.usuario(id) NOT VALID;
 
 
--- Completed on 2025-10-13 21:22:45
+-- Completed on 2025-10-13 21:27:48
 
 --
 -- PostgreSQL database dump complete
