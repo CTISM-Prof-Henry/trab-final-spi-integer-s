@@ -1,0 +1,6 @@
+
+Colocar no JUnit antes de rodar os testes para ocultar os warnings.
+
+    -javaagent:C:\Users\Juliano\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.7\byte-buddy-agent-1.17.7.jar
+
+    -Xshare:off
