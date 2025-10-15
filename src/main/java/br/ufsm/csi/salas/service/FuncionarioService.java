@@ -4,7 +4,7 @@ import br.ufsm.csi.salas.dao.FuncionarioDAO;
 import br.ufsm.csi.salas.model.Funcionario;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FuncionarioService {
@@ -37,7 +37,7 @@ public class FuncionarioService {
 
     }
 
-    public ArrayList<Funcionario> listar() {
+    public List<Funcionario> listar() {
         return dao.listar();
     }
 

@@ -27,6 +27,7 @@ public class UsuarioDAO {
 
     public ArrayList<Usuario> listar() {
         ArrayList<Usuario> usuarios = new ArrayList<>();
+
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              Statement stmt = conn.createStatement())
         {
@@ -89,6 +90,7 @@ public class UsuarioDAO {
 
     public Usuario buscar(int id) {
         Usuario usuario = new Usuario();
+
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM usuario WHERE id = ?"))
         {

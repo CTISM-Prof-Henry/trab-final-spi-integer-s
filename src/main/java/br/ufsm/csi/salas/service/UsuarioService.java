@@ -3,7 +3,7 @@ package br.ufsm.csi.salas.service;
 import br.ufsm.csi.salas.dao.UsuarioDAO;
 import br.ufsm.csi.salas.model.Usuario;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioService {
 
@@ -27,7 +27,7 @@ public class UsuarioService {
 
     }
 
-    public ArrayList<Usuario> listar() {
+    public List<Usuario> listar() {
         return dao.listar();
     }
 

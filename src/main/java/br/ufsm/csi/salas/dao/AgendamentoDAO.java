@@ -8,6 +8,7 @@ import br.ufsm.csi.salas.model.Usuario;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AgendamentoDAO {
 
@@ -25,8 +26,8 @@ public class AgendamentoDAO {
         return "Agendamento inserido com sucesso!";
     }
 
-    public ArrayList<Agendamento> listar() {
-        ArrayList<Agendamento> agendamentos = new ArrayList<>();
+    public List<Agendamento> listar() {
+        List<Agendamento> agendamentos = new ArrayList<>();
 
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              Statement stmt = conn.createStatement();
@@ -105,8 +106,8 @@ public class AgendamentoDAO {
         return true;
     }
 
-    public ArrayList<Agendamento> buscarPorData(LocalDate data) {
-        ArrayList<Agendamento> agendamentos = new ArrayList<>();
+    public List<Agendamento> buscarPorData(LocalDate data) {
+        List<Agendamento> agendamentos = new ArrayList<>();
 
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM agendamento where data = ? order by data ")) {
@@ -121,7 +122,7 @@ public class AgendamentoDAO {
         return agendamentos;
     }
 
-    private void montaAgendamento(ArrayList<Agendamento> agendamentos, PreparedStatement stmt) throws SQLException {
+    private void montaAgendamento(List<Agendamento> agendamentos, PreparedStatement stmt) throws SQLException {
         stmt.execute();
 
         while (stmt.getResultSet().next()) {
@@ -149,8 +150,8 @@ public class AgendamentoDAO {
     }
 
 
-    public ArrayList<Agendamento> listarPorStatus(int i) {
-        ArrayList<Agendamento> agendamentos = new ArrayList<>();
+    public List<Agendamento> listarPorStatus(int i) {
+        List<Agendamento> agendamentos = new ArrayList<>();
 
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM agendamento WHERE status = ? ORDER BY data")) {

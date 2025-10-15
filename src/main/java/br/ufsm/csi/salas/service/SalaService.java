@@ -3,7 +3,7 @@ package br.ufsm.csi.salas.service;
 import br.ufsm.csi.salas.dao.SalaDAO;
 import br.ufsm.csi.salas.model.Sala;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SalaService {
 
@@ -35,7 +35,7 @@ public class SalaService {
 
     }
 
-    public ArrayList<Sala> listar() {
+    public List<Sala> listar() {
         return dao.listar();
     }
 

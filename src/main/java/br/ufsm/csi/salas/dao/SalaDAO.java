@@ -27,6 +27,7 @@ public class SalaDAO {
 
     public ArrayList<Sala> listar() {
         ArrayList<Sala> salas = new ArrayList<>();
+
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              Statement stmt = conn.createStatement())
         {
@@ -90,6 +91,7 @@ public class SalaDAO {
 
     public Sala buscar(int id) {
         Sala sala = new Sala();
+
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM sala WHERE id = ?"))
         {

@@ -4,6 +4,7 @@ import br.ufsm.csi.salas.model.Funcionario;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FuncionarioDAO {
 
@@ -27,8 +28,9 @@ public class FuncionarioDAO {
         return "Funcionário inserido com sucesso!";
     }
 
-    public ArrayList<Funcionario> listar() {
-        ArrayList<Funcionario> funcionarios = new ArrayList<>();
+    public List<Funcionario> listar() {
+        List<Funcionario> funcionarios = new ArrayList<>();
+
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM funcionario ORDER BY nome"))
@@ -92,10 +94,10 @@ public class FuncionarioDAO {
 
     public Funcionario buscar(int id) {
         Funcionario funcionario = new Funcionario();
+
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM funcionario WHERE id = ?"))
         {
-
             stmt.setInt(1, id);
             resultSet(funcionario, stmt);
         } catch (SQLException | ClassNotFoundException e) {
@@ -119,6 +121,7 @@ public class FuncionarioDAO {
 
     public Funcionario buscar(String email) {
         Funcionario funcionario = new Funcionario();
+
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM funcionario WHERE email = ?"))
         {

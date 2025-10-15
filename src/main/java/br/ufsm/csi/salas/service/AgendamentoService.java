@@ -4,7 +4,7 @@ import br.ufsm.csi.salas.dao.AgendamentoDAO;
 import br.ufsm.csi.salas.model.Agendamento;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
 public class AgendamentoService {
     private static AgendamentoDAO dao = new AgendamentoDAO();
@@ -33,15 +33,15 @@ public class AgendamentoService {
         }
     }
 
-    public ArrayList<Agendamento> listar() {
+    public List<Agendamento> listar() {
         return dao.listar();
     }
 
-    public ArrayList<Agendamento> buscarPorData(LocalDate data) {
+    public List<Agendamento> buscarPorData(LocalDate data) {
         return dao.buscarPorData(data);
     }
 
-    public ArrayList<Agendamento> listarPorStatus(int i) {
+    public List<Agendamento> listarPorStatus(int i) {
         return dao.listarPorStatus(i);
     }
 }
