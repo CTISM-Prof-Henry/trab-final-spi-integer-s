@@ -1,0 +1,278 @@
+/* Estilos personalizados */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7f6; /* Fundo cinza claro para destacar o conteúdo */
+}
+
+.navbar-top {
+    background-color: #FF9B44; /* Tom de laranja similar ao protótipo */
+    padding: 0.5rem 1rem;
+}
+
+.navbar-bottom {
+    background-color: #475799; /* Tom de azul similar ao protótipo */
+}
+
+.centered-title-container {
+    flex-grow: 1; /* Permite que o container do título ocupe o espaço e centralize */
+}
+
+.centered-title-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: white;
+}
+
+.centered-title-container span {
+    font-size: 1rem;
+    color: white;
+    display: block; /* Garante que o subt  ítulo fique abaixo */
+    margin-top: -5px;
+}
+
+.navbar-brand i {
+    font-size: 2.5rem; /* Aumenta o ícone da porta */
+    color: white;
+}
+
+.login-section a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #5cb85c; /* Verde para status 'online' */
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-left: 5px;
+}
+
+.navbar-bottom .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar-bottom .navbar-nav .nav-link.active,
+.navbar-bottom .navbar-nav .nav-link:hover {
+    color: white;
+}
+
+.navbar-brand-container, .login-section {
+    flex-shrink: 0;
+}
+
+/* Estilos para os cards */
+.info-card, .action-card {
+    border-radius: 1rem;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: white;
+    height: 100%;
+}
+
+.info-card:hover, .action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.info-card .card-body {
+    padding: 1.5rem;
+}
+
+.action-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.action-card .card-body {
+    text-align: center;
+}
+
+.action-card i {
+    font-size: 2rem;
+    color: #0d6efd;
+}
+
+/* Estilos para a seção do gráfico */
+.section-title {
+    display: inline-block;
+    background-color: #6c757d;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.chart-section-container {
+    background-color: #3f51b5;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    color: white;
+    margin-top: 2rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+.chart-container {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 2px solid #dee2e6;
+}
+
+.y-axis-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    margin-right: 1rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+.timeline {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    background: repeating-linear-gradient(90deg, #e9ecef, #e9ecef 1px, #f8f9fa 1px, #f8f9fa 10%);
+    border-left: 2px solid #adb5bd;
+    border-bottom: 2px solid #adb5bd;
+}
+
+.usage-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: 5px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+.usage-bar:hover {
+    opacity: 1;
+    transform: scaleY(1.05);
+}
+
+.chart-footer a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.chart-footer a:hover {
+    color: white;
+}
+
+/* Estilos para containers de conteúdo principal (tabelas, filtros, formulários) */
+.content-box {
+    background-color: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 .25rem .75rem rgba(0,0,0,.1);
+    border: 1px solid #e0e0e0;
+}
+
+.content-box-placeholder {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    border: 2px dashed #ced4da;
+    border-radius: 1rem;
+}
+
+/* Estilos para botões de formulário */
+.btn-custom-orange {
+    background-color: #FF9B44;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+}
+.btn-custom-orange:hover {
+    background-color: #e88a33;
+    color: white;
+}
+
+.btn-custom-blue {
+    background-color: #475799;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+}
+.btn-custom-blue:hover {
+    background-color: #3a467a;
+    color: white;
+}
+
+/* Estilos para o Calendário */
+.calendar-container {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+}
+.calendar-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.calendar-header h5 {
+    color: #e6007e; /* Rosa do protótipo */
+    font-weight: bold;
+}
+.calendar-table {
+    width: 100%;
+}
+.calendar-table th {
+    text-align: center;
+    color: #6c757d;
+    font-weight: normal;
+    font-size: 0.9rem;
+}
+.calendar-table td {
+    text-align: center;
+    padding: 0.5rem 0.2rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    line-height: 1;
+}
+.calendar-table td.other-month {
+    color: #adb5bd;
+}
+.calendar-table td.today {
+    background-color: #e6007e;
+    color: white;
+}
+.calendar-table td.selected {
+    background-color: #475799;
+    color: white;
+    font-weight: bold;
+}
+.calendar-table td:not(.other-month):hover {
+    background-color: #e9ecef;
+}
+
+/* Estilos para o formulário de agendamento */
+#repetition-options {
+    border-left: 3px solid #dee2e6;
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+}
+
