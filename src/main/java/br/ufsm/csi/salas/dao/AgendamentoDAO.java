@@ -106,6 +106,42 @@ public class AgendamentoDAO {
         return true;
     }
 
+    public Agendamento buscar(int id) {
+        Agendamento agendamento = null;
+
+        try (Connection conn = ConectarBanco.conectarBancoPostgres();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM agendamento WHERE id = ?")) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                SalaDAO salaDAO = new SalaDAO();
+                Sala sala = salaDAO.buscar(rs.getInt("idsala"));
+
+                FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
+                Funcionario funcionario = funcionarioDAO.buscar(rs.getInt("idfunc"));
+
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                Usuario usuario = usuarioDAO.buscar(rs.getInt("idusuario"));
+
+                agendamento = new Agendamento();
+                agendamento.setId(rs.getInt("id"));
+                agendamento.setSala(sala);
+                agendamento.setFuncionario(funcionario);
+                agendamento.setUsuario(usuario);
+                agendamento.setStatus(rs.getInt("status"));
+                agendamento.setTurno(rs.getInt("turno"));
+                agendamento.setData(rs.getDate("data").toLocalDate());
+                agendamento.setDatacadastro(rs.getDate("datacadastro").toLocalDate());
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao buscar agendamento");
+        }
+        return agendamento;
+    }
+
     public List<Agendamento> buscarPorData(LocalDate data) {
         List<Agendamento> agendamentos = new ArrayList<>();
 

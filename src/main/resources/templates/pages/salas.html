@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,72 +12,313 @@
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <!-- Cabeçalho (igual em todas as páginas) -->
-        <div class="navbar-top">
-            <div class="container-fluid d-flex align-items-center justify-content-between">
-                <div class="navbar-brand-container"><a class="navbar-brand" href="#"><i class="bi bi-door-open"></i></a></div>
-                <div class="centered-title-container text-center"><h1>SALAS</h1><span>Agendamento</span></div>
-                <div class="login-section d-flex align-items-center"><a href="#">login</a><span class="login-status-indicator"></span></div>
+<header>
+    <!-- Cabeçalho (igual em todas as páginas) -->
+    <div class="navbar-top">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="navbar-brand-container">
+                <a class="navbar-brand" th:href="@{/home}">
+                    <i class="bi bi-door-open"></i>
+                </a>
+            </div>
+            <div class="centered-title-container text-center">
+                <h1>SALAS</h1>
+                <span>Agendamento</span>
+            </div>
+            <div class="login-section d-flex align-items-center">
+                <a href="#">login</a>
+                <span class="login-status-indicator"></span>
             </div>
         </div>
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="mainNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="home">início</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">locações</a></li>
-                        <li class="nav-item"><a class="nav-link" href="agendamento">agendamentos</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="sala">salas</a></li>
-                    </ul>
-                </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">locações</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamento}">agendamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{/sala}">salas</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
 
-    <main class="container my-4">
-        <!-- Cards de Informação e Ação -->
-        <div class="row justify-content-center g-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="card info-card shadow-sm">
-                    <div class="card-body">
-                        <h1 class="fw-bold text-success mb-0">67</h1>
-                        <p class="card-subtitle text-body-secondary mt-2">Salas Livres</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card info-card shadow-sm">
-                    <div class="card-body">
-                        <h1 class="fw-bold text-warning mb-0">20</h1>
-                        <p class="card-subtitle text-body-secondary mt-2">Salas em Uso</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card action-card shadow-sm">
-                    <a href="cadastro-sala.html" style="text-decoration: none;">
-                    <div class="card-body">
-                        <i class="bi bi-plus-circle"></i>
-                        <p class="card-subtitle text-body-secondary mt-2 fw-bold">Gerenciar Salas</p>
-                    </div>
-                    </a>
+<main class="container my-4">
+    <!-- Mensagens de Sucesso/Erro -->
+    <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${mensagemSucesso}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${mensagemErro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row justify-content-center g-4">
+        <!-- Card Salas Livres -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h1 class="fw-bold text-success mb-0" th:text="${salasLivres}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">
+                        Salas Livres
+                        <small class="d-block text-muted" th:text="'(' + ${turnoAtual} + ')'">(Turno)</small>
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Filtros e Tabela -->
-        <div class="content-box mt-5">
-            <div class="content-box-placeholder mb-4">
-                <p class="mb-0">filtros para seleção específica</p>
-            </div>
-            <div class="content-box-placeholder">
-                <p class="mb-0">tabela mostrando as salas livres(padrão)</p>
+        <!-- Card Salas em Uso -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h1 class="fw-bold text-warning mb-0" th:text="${salasEmUso}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">
+                        Salas em Uso
+                        <small class="d-block text-muted" th:text="'(' + ${turnoAtual} + ')'">(Turno)</small>
+                    </p>
+                </div>
             </div>
         </div>
-    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Card Cadastrar Salas -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card action-card shadow-sm border-0">
+                <a th:href="@{/sala/cadastro}" class="text-decoration-none">
+                    <div class="card-body text-center">
+                        <i class="bi bi-plus-circle display-6 text-primary"></i>
+                        <p class="card-subtitle text-body-secondary mt-2 fw-bold">Cadastrar Salas</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de Turno Atual -->
+    <div class="text-center mb-3">
+        <span class="badge bg-info fs-6 p-2">
+            <i class="bi bi-clock"></i>
+            Turno atual: <span th:text="${turnoAtual}">Manhã</span>
+            - <span id="hora-atual"></span>
+        </span>
+    </div>
+
+    <!-- Filtros e Tabela -->
+    <div class="card mt-4 border-0 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <!-- NOVO: Filtro por Capacidade Mínima -->
+                <div class="col-auto">
+                    <label for="capacidade-filter" class="col-form-label fw-bold">Capacidade mín.:</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="capacidade-filter">
+                        <option value="0">Qualquer</option>
+                        <option value="10">10+ lugares</option>
+                        <option value="20">20+ lugares</option>
+                        <option value="30">30+ lugares</option>
+                        <option value="40">40+ lugares</option>
+                        <option value="50">50+ lugares</option>
+                        <option value="60">60+ lugares</option>
+                        <option value="80">80+ lugares</option>
+                        <option value="100">100+ lugares</option>
+                        <option value="150">150+ lugares</option>
+                        <option value="200">200+ lugares</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por Tipo -->
+                <div class="col-auto">
+                    <label for="tipo-filter" class="col-form-label fw-bold">Tipo:</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="tipo-filter">
+                        <option value="">Todos</option>
+                        <option th:each="tipo : ${tiposSala}"
+                                th:value="${tipo}"
+                                th:text="${tipo}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Filtro por Status -->
+                <div class="col-auto">
+                    <label for="status-filter" class="col-form-label fw-bold">Status:</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="status-filter">
+                        <option value="">Todos</option>
+                        <option value="livre">Livre</option>
+                        <option value="em-uso">Em Uso</option>
+                    </select>
+                </div>
+
+                <!-- Botão Limpar -->
+                <div class="col-auto">
+                    <button class="btn btn-outline-secondary" onclick="limparFiltros()">
+                        <i class="bi bi-arrow-clockwise"></i> Limpar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Salas -->
+    <div class="card mt-3 border-0 shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Salas</h5>
+            <span class="badge bg-primary" th:text="'Total: ' + ${#lists.size(salas)}">Total: 0</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Bloco</th>
+                        <th>Tipo</th>
+                        <th>Capacidade</th>
+                        <th>Status</th>
+                        <th width="120">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="sala : ${salas}">
+                        <td th:text="${sala.id}"></td>
+                        <td th:text="${sala.bloco}"></td>
+                        <td th:text="${sala.tipo}"></td>
+                        <td th:text="${sala.capacidade} + ' pessoas'"></td>
+                        <td>
+                            <span th:if="${salasEmUsoIds != null and #lists.contains(salasEmUsoIds, sala.id)}"
+                                  class="badge bg-warning"><i class="bi bi-person-fill"></i> Em Uso</span>
+                            <span th:unless="${salasEmUsoIds != null and #lists.contains(salasEmUsoIds, sala.id)}"
+                                  class="badge bg-success"><i class="bi bi-check-circle"></i> Livre</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a th:href="@{/sala/editar/{id}(id=${sala.id})}"
+                                   class="btn btn-outline-primary"
+                                   title="Editar Sala">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <!-- CORREÇÃO: Removido o onclick problemático -->
+                                <a th:href="@{/sala/excluir/{id}(id=${sala.id})}"
+                                   class="btn btn-outline-danger btn-excluir"
+                                   title="Excluir Sala"
+                                   th:attr="data-sala-id=${sala.id}, data-sala-bloco=${sala.bloco}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(salas)}">
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                            Nenhuma sala cadastrada
+                            <br>
+                            <a th:href="@{/sala/cadastro}" class="btn btn-primary mt-3">
+                                <i class="bi bi-plus-circle"></i> Cadastrar Primeira Sala
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Filtros da tabela
+    function filtrarTabela() {
+        const filtroCapacidade = parseInt(document.getElementById('capacidade-filter').value) || 0;
+        const filtroTipo = document.getElementById('tipo-filter').value.toLowerCase();
+        const filtroStatus = document.getElementById('status-filter').value.toLowerCase();
+        const linhas = document.querySelectorAll('tbody tr');
+
+        linhas.forEach(linha => {
+            if (linha.cells.length > 1) {
+                const capacidadeTexto = linha.cells[3].textContent; // "30 pessoas"
+                const capacidade = parseInt(capacidadeTexto) || 0;
+                const tipo = linha.cells[2].textContent.toLowerCase();
+                const status = linha.cells[4].textContent.toLowerCase();
+
+                const mostraCapacidade = capacidade >= filtroCapacidade;
+                const mostraTipo = !filtroTipo || tipo.includes(filtroTipo);
+                const mostraStatus = !filtroStatus ||
+                    (filtroStatus === 'livre' && status.includes('livre')) ||
+                    (filtroStatus === 'em-uso' && status.includes('em uso'));
+
+                linha.style.display = (mostraCapacidade && mostraTipo && mostraStatus) ? '' : 'none';
+            }
+        });
+    }
+
+    function limparFiltros() {
+        document.getElementById('capacidade-filter').value = '0';
+        document.getElementById('tipo-filter').value = '';
+        document.getElementById('status-filter').value = '';
+        filtrarTabela();
+    }
+
+    // Atualizar hora atual
+    function atualizarHora() {
+        const agora = new Date();
+        const hora = agora.getHours().toString().padStart(2, '0');
+        const minutos = agora.getMinutes().toString().padStart(2, '0');
+        document.getElementById('hora-atual').textContent = hora + ':' + minutos;
+    }
+
+    // Confirmação de exclusão com JavaScript puro
+    document.addEventListener('DOMContentLoaded', function() {
+        const botoesExcluir = document.querySelectorAll('.btn-excluir');
+
+        botoesExcluir.forEach(botao => {
+            botao.addEventListener('click', function(e) {
+                const salaId = this.getAttribute('data-sala-id');
+                const salaBloco = this.getAttribute('data-sala-bloco');
+                const confirmacao = confirm('Tem certeza que deseja excluir a sala ' + salaBloco + ' ' + salaId + '?');
+
+                if (!confirmacao) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Atualizar hora inicial e a cada minuto
+        atualizarHora();
+        setInterval(atualizarHora, 60000);
+
+        // Aplicar filtros quando os selects mudarem
+        document.getElementById('capacidade-filter').addEventListener('change', filtrarTabela);
+        document.getElementById('tipo-filter').addEventListener('change', filtrarTabela);
+        document.getElementById('status-filter').addEventListener('change', filtrarTabela);
+    });
+
+    // Auto-refresh a cada 2 minutos para atualizar os status
+    setTimeout(() => {
+        window.location.reload();
+    }, 120000);
+</script>
 </body>
 </html>

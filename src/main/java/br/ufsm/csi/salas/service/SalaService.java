@@ -2,9 +2,11 @@ package br.ufsm.csi.salas.service;
 
 import br.ufsm.csi.salas.dao.SalaDAO;
 import br.ufsm.csi.salas.model.Sala;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SalaService {
 
     private static SalaDAO dao = new SalaDAO();
