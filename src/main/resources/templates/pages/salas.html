@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salas - Agendamento</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Estilos Personalizados -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
 <header>
-    <!-- Cabeçalho (igual em todas as páginas) -->
     <div class="navbar-top">
         <div class="container-fluid d-flex align-items-center justify-content-between">
             <div class="navbar-brand-container">
@@ -42,9 +38,6 @@
                         <a class="nav-link" th:href="@{/home}">início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">locações</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" th:href="@{/agendamento}">agendamentos</a>
                     </li>
                     <li class="nav-item">
@@ -57,7 +50,6 @@
 </header>
 
 <main class="container my-4">
-    <!-- Mensagens de Sucesso/Erro -->
     <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle-fill"></i>
         <span th:text="${mensagemSucesso}"></span>
@@ -125,7 +117,7 @@
         </div>
         <div class="card-body">
             <div class="row g-3 align-items-center">
-                <!-- NOVO: Filtro por Capacidade Mínima -->
+                <!-- Filtro por Capacidade Mínima -->
                 <div class="col-auto">
                     <label for="capacidade-filter" class="col-form-label fw-bold">Capacidade mín.:</label>
                 </div>
@@ -219,7 +211,6 @@
                                    title="Editar Sala">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <!-- CORREÇÃO: Removido o onclick problemático -->
                                 <a th:href="@{/sala/excluir/{id}(id=${sala.id})}"
                                    class="btn btn-outline-danger btn-excluir"
                                    title="Excluir Sala"
@@ -258,7 +249,7 @@
 
         linhas.forEach(linha => {
             if (linha.cells.length > 1) {
-                const capacidadeTexto = linha.cells[3].textContent; // "30 pessoas"
+                const capacidadeTexto = linha.cells[3].textContent;
                 const capacidade = parseInt(capacidadeTexto) || 0;
                 const tipo = linha.cells[2].textContent.toLowerCase();
                 const status = linha.cells[4].textContent.toLowerCase();
@@ -289,7 +280,7 @@
         document.getElementById('hora-atual').textContent = hora + ':' + minutos;
     }
 
-    // Confirmação de exclusão com JavaScript puro
+    // Confirmação de exclusão
     document.addEventListener('DOMContentLoaded', function() {
         const botoesExcluir = document.querySelectorAll('.btn-excluir');
 
@@ -305,7 +296,7 @@
             });
         });
 
-        // Atualizar hora inicial e a cada minuto
+        // Atualizar hora inicial a cada minuto
         atualizarHora();
         setInterval(atualizarHora, 60000);
 
@@ -315,7 +306,7 @@
         document.getElementById('status-filter').addEventListener('change', filtrarTabela);
     });
 
-    // Auto-refresh a cada 2 minutos para atualizar os status
+    // Auto-refresh para atualizar os status
     setTimeout(() => {
         window.location.reload();
     }, 120000);

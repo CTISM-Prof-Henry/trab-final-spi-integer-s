@@ -45,12 +45,6 @@ public class AgendamentoService {
     }
 
     public Agendamento buscarPorId(int id) {
-        // Implementação temporária - filtra da lista
-        // Você deve implementar um método específico no DAO depois
-        List<Agendamento> agendamentos = listar();
-        return agendamentos.stream()
-                .filter(a -> a.getId() != null && a.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return dao.buscar(id);
     }
 }
