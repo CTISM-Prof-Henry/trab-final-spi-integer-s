@@ -45,6 +45,7 @@ public class AgendamentoDAO {
 
                 Agendamento agendamento = new Agendamento();
 
+                agendamento.setId(rs.getInt("id"));
                 agendamento.setSala(sala);
                 agendamento.setFuncionario(funcionario);
                 agendamento.setUsuario(usuario);
@@ -106,19 +107,84 @@ public class AgendamentoDAO {
         return true;
     }
 
+    public Agendamento buscar(int id) {
+        Agendamento agendamento = null;
+
+        try (Connection conn = ConectarBanco.conectarBancoPostgres();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM agendamento WHERE id = ?")) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                SalaDAO salaDAO = new SalaDAO();
+                Sala sala = salaDAO.buscar(rs.getInt("idsala"));
+
+                FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
+                Funcionario funcionario = funcionarioDAO.buscar(rs.getInt("idfunc"));
+
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                Usuario usuario = usuarioDAO.buscar(rs.getInt("idusuario"));
+
+                agendamento = new Agendamento();
+                agendamento.setId(rs.getInt("id"));
+                agendamento.setSala(sala);
+                agendamento.setFuncionario(funcionario);
+                agendamento.setUsuario(usuario);
+                agendamento.setStatus(rs.getInt("status"));
+                agendamento.setTurno(rs.getInt("turno"));
+                agendamento.setData(rs.getDate("data").toLocalDate());
+                agendamento.setDatacadastro(rs.getDate("datacadastro").toLocalDate());
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Erro ao buscar agendamento");
+        }
+        return agendamento;
+    }
+
     public List<Agendamento> buscarPorData(LocalDate data) {
         List<Agendamento> agendamentos = new ArrayList<>();
 
+        String sql = "SELECT id, idsala, idfunc, idusuario, status, turno, data, datacadastro FROM agendamento WHERE data = ?";
         try (Connection conn = ConectarBanco.conectarBancoPostgres();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM agendamento where data = ? order by data ")) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setDate(1, Date.valueOf(data));
 
-            montaAgendamento(agendamentos, stmt);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Agendamento a = new Agendamento();
+                    a.setId(rs.getInt("id"));
+                    a.setData(rs.getDate("data").toLocalDate());
+                    a.setTurno(rs.getInt("turno"));
+                    a.setStatus(rs.getInt("status"));
+                    a.setDatacadastro(rs.getDate("datacadastro").toLocalDate());
+
+                    // Preenche a sala
+                    Sala s = new Sala();
+                    s.setId(rs.getInt("idsala"));
+                    a.setSala(s);
+
+                    // Preenche o funcionário
+                    Funcionario f = new Funcionario();
+                    f.setId(rs.getInt("idfunc"));
+                    a.setFuncionario(f);
+
+                    // Preenche o usuário
+                    Usuario u = new Usuario();
+                    u.setId(rs.getInt("idusuario"));
+                    a.setUsuario(u);
+
+                    agendamentos.add(a);
+                }
+            }
+
         } catch (SQLException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Erro ao buscar agendamentos");
+            e.printStackTrace();
+            System.out.println("Erro ao buscar agendamentos por data");
         }
+
         return agendamentos;
     }
 
@@ -148,7 +214,6 @@ public class AgendamentoDAO {
             agendamentos.add(agendamento);
         }
     }
-
 
     public List<Agendamento> listarPorStatus(int i) {
         List<Agendamento> agendamentos = new ArrayList<>();

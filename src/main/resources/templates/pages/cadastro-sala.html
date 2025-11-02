@@ -1,89 +1,150 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Sala - Agendamento</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Estilos Personalizados -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <!-- Cabeçalho (igual em todas as páginas) -->
-        <div class="navbar-top">
-            <div class="container-fluid d-flex align-items-center justify-content-between">
-                <div class="navbar-brand-container"><a class="navbar-brand" href="#"><i class="bi bi-door-open"></i></a></div>
-                <div class="centered-title-container text-center"><h1>SALAS</h1><span>Agendamento</span></div>
-                <div class="login-section d-flex align-items-center"><a href="#">login</a><span class="login-status-indicator"></span></div>
+<header>
+    <div class="navbar-top">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="navbar-brand-container">
+                <a class="navbar-brand" th:href="@{/home}">
+                    <i class="bi bi-door-open"></i>
+                </a>
+            </div>
+            <div class="centered-title-container text-center">
+                <h1>SALAS</h1>
+                <span>Agendamento</span>
+            </div>
+            <div class="login-section d-flex align-items-center">
+                <a href="#">login</a>
+                <span class="login-status-indicator"></span>
             </div>
         </div>
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="mainNav">
-                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="home.html">início</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">locações</a></li>
-                        <li class="nav-item"><a class="nav-link" href="agendamentos.html">agendamentos</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="salas.html">salas</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <main class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="content-box">
-                    <h2 class="text-center mb-4">Cadastro de Sala</h2>
-                    <form>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="bloco" class="form-label">Bloco*</label>
-                                <select id="bloco" class="form-select">
-                                    <option selected>Selecione...</option>
-                                    <option>A</option>
-                                    <option>B</option>
-                                    <option>C</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="codigo" class="form-label">Código*</label>
-                                <input type="text" class="form-control" id="codigo">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="tipo" class="form-label">Tipo*</label>
-                                 <select id="tipo" class="form-select">
-                                    <option selected>Selecione...</option>
-                                    <option>Sala de Aula</option>
-                                    <option>Laboratório</option>
-                                    <option>Auditório</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="capacidade" class="form-label">Capacidade*</label>
-                                <input type="number" class="form-control" id="capacidade">
-                            </div>
-                        </div>
-                        <div class="text-center mt-4">
-                            <a href="salas.html">
-                                <button type="button" class="btn btn-custom-orange me-2">CADASTRAR</button>
-                            </a>
-                            <a href="salas.html">
-                                <button type="button" class="btn btn-custom-blue">VOLTAR</button>
-                            </a>
-                        </div>
-                    </form>
-                </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamento}">agendamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{/sala}">salas</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </main>
+    </nav>
+</header>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="content-box">
+                <h2 class="text-center mb-4" th:text="${sala.id != null} ? 'Editar Sala' : 'Cadastro de Sala'">
+                    Cadastro de Sala
+                </h2>
+
+                <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${mensagemSucesso}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${mensagemErro}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <form th:action="${sala.id != null} ? @{/sala/editar} : @{/sala/cadastrar}"
+                      th:object="${sala}"
+                      method="post">
+
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="bloco" class="form-label">Bloco*</label>
+                            <select id="bloco" class="form-select" th:field="*{bloco}" required>
+                                <option value="">Selecione...</option>
+                                <option th:each="bloco : ${blocos}"
+                                        th:value="${bloco}"
+                                        th:text="${bloco}">
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('bloco')}">
+                                <span th:errors="*{bloco}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="tipo" class="form-label">Tipo*</label>
+                            <select id="tipo" class="form-select" th:field="*{tipo}" required>
+                                <option value="">Selecione...</option>
+                                <option th:each="tipo : ${tiposSala}"
+                                        th:value="${tipo}"
+                                        th:text="${tipo}">
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('tipo')}">
+                                <span th:errors="*{tipo}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="capacidade" class="form-label">Capacidade*</label>
+                            <input type="number" class="form-control" id="capacidade"
+                                   th:field="*{capacidade}" min="1" max="500" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('capacidade')}">
+                                <span th:errors="*{capacidade}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-custom-orange me-2">
+                            <span th:text="${sala.id != null} ? 'ATUALIZAR' : 'CADASTRAR'">CADASTRAR</span>
+                        </button>
+                        <a th:href="@{/sala}" class="btn btn-custom-blue">VOLTAR</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Validação básica do formulário
+    (function() {
+        'use strict';
+
+        // Seleciona todos os formulários que precisam de validação
+        var forms = document.querySelectorAll('.needs-validation');
+
+        // Loop sobre eles e previne submissão
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
 </body>
 </html>

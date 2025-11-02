@@ -1,139 +1,488 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendamento de Sala - SALAS</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Estilos Personalizados -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <!-- Cabeçalho (igual em todas as páginas) -->
-        <div class="navbar-top">
-            <div class="container-fluid d-flex align-items-center justify-content-between">
-                <div class="navbar-brand-container"><a class="navbar-brand" href="#"><i class="bi bi-door-open"></i></a></div>
-                <div class="centered-title-container text-center"><h1>SALAS</h1><span>Agendamento</span></div>
-                <div class="login-section d-flex align-items-center"><a href="#">login</a><span class="login-status-indicator"></span></div>
+<header>
+    <div class="navbar-top">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <a class="navbar-brand" th:href="@{/home}">
+                <i class="bi bi-door-open"></i>
+            </a>
+            <div class="centered-title-container text-center">
+                <h1>SALAS</h1>
+                <span>Agendamento</span>
+            </div>
+            <div class="login-section d-flex align-items-center">
+                <span th:if="${usuarioLogado != null}" class="me-2">
+                    Olá, <span th:text="${usuarioLogado.nome}"></span>
+                </span>
+                <a th:href="@{/logout}">Sair</a>
             </div>
         </div>
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="mainNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="home.html">início</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">agendar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="agendamentos.html">agendamentos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="salas.html">salas</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+    </div>
 
-    <main class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="content-box">
-                    <h2 class="text-center mb-5">Agendamento de Sala</h2>
-                    <form>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/home}">início</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/agendamento}">agendamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/sala}">salas</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light text-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span th:text="${agendamento.id != null} ? 'Editar Agendamento' : 'Novo Agendamento'"></span>
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    <!-- Mensagens de Sucesso/Erro -->
+                    <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill"></i> <span th:text="${mensagemSucesso}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i> <span th:text="${mensagemErro}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <form th:object="${agendamento}"
+                          method="post"
+                          onsubmit="return prepararEnvioRecorrente()"
+                          th:attr="action=${agendamento.id != null} ? @{/agendamento/editar} : @{/agendamento/salvar}">
+
+                    <input type="hidden" th:field="*{id}" id="agendamentoId" />
+                        <input type="hidden" th:field="*{funcionario.id}" />
+                        <input type="hidden" th:field="*{status}" />
+
+                        <!-- Campo hidden para envio da data (preenchido mesmo em readonly) -->
+                        <input type="hidden" th:field="*{data}" th:value="${agendamento.data}" id="dataHidden" />
+
                         <div class="row g-4">
-                            <!-- Coluna da Esquerda: Formulário -->
                             <div class="col-md-6">
+                                <!-- USUÁRIO -->
                                 <div class="mb-3">
-                                    <label for="matricula" class="form-label">Matrícula</label>
-                                    <input type="text" class="form-control" id="matricula">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="nome" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="nome" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="sala" class="form-label">Sala</label>
-                                    <input type="text" class="form-control" id="sala" value="Bloco A - A101" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="turno" class="form-label">Turno</label>
-                                    <select class="form-select" id="turno" multiple>
-                                        <option value="manha">Manhã</option>
-                                        <option value="tarde">Tarde</option>
-                                        <option value="noite">Noite</option>
+                                    <label class="form-label fw-bold">Usuário*</label>
+                                    <select class="form-select" th:field="*{usuario.id}" required>
+                                        <option value="">Selecione o usuário...</option>
+                                        <option th:each="usuario : ${usuarios}"
+                                                th:value="${usuario.id}"
+                                                th:text="${usuario.nome + ' (' + usuario.matricula + ')'}">
+                                        </option>
                                     </select>
-                                    <small class="form-text text-muted">Segure Ctrl (ou Cmd) para selecionar múltiplos turnos.</small>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="repeat-check">
-                                    <label class="form-check-label" for="repeat-check">
-                                        Repetir agendamento?
-                                    </label>
-                                </div>
-                                <div id="repetition-options" class="d-none mt-3">
-                                    <div class="d-flex align-items-center">
-                                        <label for="repeat-for" class="me-2">Repetir para</label>
-                                        <input type="number" class="form-control me-2" id="repeat-for" value="1" style="width: 70px;">
-                                        <select class="form-select" id="repeat-unit" style="width: 120px;">
-                                            <option value="semana">semana(s)</option>
-                                            <option value="mes">mês(es)</option>
-                                        </select>
+                                    <div th:if="${#fields.hasErrors('usuario.id')}" class="text-danger small">
+                                        Selecione um usuário
                                     </div>
+                                </div>
+
+                                <!-- SALA -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Sala*</label>
+                                    <select class="form-select" th:field="*{sala.id}" id="salaSelect" required>
+                                        <option value="">Selecione uma sala...</option>
+                                        <option th:each="sala : ${salas}"
+                                                th:data-bloco="${sala.bloco}"
+                                                th:data-tipo="${sala.tipo}"
+                                                th:data-capacidade="${sala.capacidade}"
+                                                th:value="${sala.id}"
+                                                th:text="'Bloco ' + ${sala.bloco} + ' - ' + ${sala.tipo} + ' (Capacidade: ' + ${sala.capacidade} + ')'">
+                                        </option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('sala.id')}" class="text-danger small">
+                                        Selecione uma sala
+                                    </div>
+                                </div>
+
+                                <!-- DATA -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Data do agendamento*</label>
+                                    <input type="date" class="form-control bg-light"
+                                           th:value="${#temporals.format(agendamento.data, 'yyyy-MM-dd')}"
+                                           readonly>
+                                    <div th:if="${#fields.hasErrors('data')}" class="text-danger small">
+                                        Data é obrigatória
+                                    </div>
+                                    <div class="form-text text-info">
+                                        <i class="bi bi-info-circle"></i> A data não pode ser alterada em edições
+                                    </div>
+                                </div>
+
+                                <!-- REPETIÇÃO (NOVOS AGENDAMENTOS) -->
+                                <div th:if="${agendamento.id == null}" class="mb-3">
+                                    <button type="button" class="btn btn-outline-secondary" id="btn-repetir">
+                                        <i class="bi bi-arrow-repeat"></i> Repetir agendamento
+                                    </button>
+                                </div>
+                                <div th:if="${agendamento.id == null}" id="repetition-options" class="d-none mb-3">
+                                    <!-- conteúdo igual -->
+                                </div>
+
+                                <!-- MENSAGEM EDIÇÃO -->
+                                <div th:if="${agendamento.id != null}" class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    <strong>Modo de edição:</strong> Não é possível alterar a data original ou criar agendamentos recorrentes.
                                 </div>
                             </div>
 
-                            <!-- Coluna da Direita: Calendário -->
                             <div class="col-md-6">
-                               <label class="form-label">Data do agendamento</label>
-                                <div class="calendar-container">
-                                    <div class="calendar-header">
-                                        <h5>June 2024</h5>
+                                <!-- TURNO -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Turno*</label>
+                                    <select class="form-select" th:field="*{turno}" id="turnoSelect" required>
+                                        <option value="0">Selecione o turno...</option>
+                                        <option value="1" th:selected="${agendamento.turno == 1}">Manhã (06:00 - 11:59)</option>
+                                        <option value="2" th:selected="${agendamento.turno == 2}">Tarde (12:00 - 17:59)</option>
+                                        <option value="3" th:selected="${agendamento.turno == 3}">Noite (18:00 - 23:59)</option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('turno')}" class="text-danger small">
+                                        Selecione um turno
                                     </div>
-                                    <table class="calendar-table">
-                                        <thead>
-                                            <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Exemplo de calendário estático -->
-                                            <tr><td class="other-month">26</td><td class="other-month">27</td><td class="other-month">28</td><td class="other-month">29</td><td class="other-month">30</td><td class="other-month">31</td><td>1</td></tr>
-                                            <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
-                                            <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td class="today">14</td><td>15</td></tr>
-                                            <tr><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td class="selected">21</td><td>22</td></tr>
-                                            <tr><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td></tr>
-                                            <tr><td>30</td><td class="other-month">1</td><td class="other-month">2</td><td class="other-month">3</td><td class="other-month">4</td><td class="other-month">5</td><td class="other-month">6</td></tr>
-                                        </tbody>
-                                    </table>
+                                </div>
+
+                                <!-- INFORMAÇÕES DA SALA -->
+                                <div class="card bg-light border-0 mb-3">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold"><i class="bi bi-info-circle"></i> Informações da Sala</h6>
+                                        <div id="sala-info" class="text-muted">Selecione uma sala para ver os detalhes</div>
+                                    </div>
+                                </div>
+
+                                <!-- DISPONIBILIDADE -->
+                                <div class="card bg-light border-0 mb-3">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold"><i class="bi bi-calendar-check"></i> Disponibilidade</h6>
+                                        <div id="disponibilidade" class="text-muted">
+                                            Selecione sala, data e turno para verificar
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- STATUS (edição) -->
+                                <div th:if="${agendamento.id != null}" class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold"><i class="bi bi-info-circle"></i> Status do Agendamento</h6>
+                                        <span th:switch="${agendamento.status}">
+                        <span th:case="1" class="badge bg-success">Aprovado</span>
+                        <span th:case="2" class="badge bg-warning">Reprovado</span>
+                        <span th:case="3" class="badge bg-secondary">Pendente</span>
+                        <span th:case="*" class="badge bg-info">Desconhecido</span>
+                    </span>
+                                    </div>
+                                </div>
+
+                                <!-- DATA ORIGINAL (edição) -->
+                                <div th:if="${agendamento.id != null && agendamento.data != null}" class="card bg-light border-0 mt-3">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold"><i class="bi bi-calendar-event"></i> Data Original do Agendamento</h6>
+                                        <span class="text-primary fw-bold" th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}"></span>
+                                        <div class="small text-muted mt-1">
+                                            Dia da semana:
+                                            <span th:text="${#temporals.dayOfWeekName(agendamento.data)}"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="text-center mt-5">
-                            <a href="agendamentos.html">
-                            <button type="button" class="btn btn-custom-orange me-2">AGENDAR</button>
-                            </a>
-
-                            <a href="selecionar-sala.html">
-                            <button type="button" class="btn btn-custom-blue">VOLTAR</button>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-custom-orange me-2">
+                                <i class="bi bi-calendar-check"></i>
+                                <span th:text="${agendamento.id != null} ? 'ATUALIZAR' : 'AGENDAR'">AGENDAR</span>
+                            </button>
+                            <a th:href="@{/agendamento}" class="btn btn-custom-blue">
+                                <i class="bi bi-arrow-left"></i> VOLTAR
                             </a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('repeat-check').addEventListener('change', function() {
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // === VERIFICAR SE É MODO EDIÇÃO ===
+    const isEditMode = document.getElementById('agendamentoId') && document.getElementById('agendamentoId').value !== '';
+
+    // === CONTROLE DO BOTÃO REPETIR (APENAS NOVO AGENDAMENTO) ===
+    if (!isEditMode) {
+        document.getElementById('btn-repetir').addEventListener('click', function() {
             const repetitionOptions = document.getElementById('repetition-options');
-            if (this.checked) {
-                repetitionOptions.classList.remove('d-none');
+            repetitionOptions.classList.remove('d-none');
+            this.classList.add('d-none');
+            atualizarDiasSelecionados();
+            verificarDisponibilidade();
+        });
+
+        document.getElementById('btn-ocultar-repetir').addEventListener('click', function() {
+            const repetitionOptions = document.getElementById('repetition-options');
+            const btnRepetir = document.getElementById('btn-repetir');
+            repetitionOptions.classList.add('d-none');
+            btnRepetir.classList.remove('d-none');
+            // Reset para 1 semana quando ocultar
+            document.getElementById('repeat-for-input').value = 1;
+            verificarDisponibilidade();
+        });
+    }
+
+    // === MOSTRAR INFORMAÇÕES DA SALA ===
+    document.getElementById("salaSelect").addEventListener("change", function () {
+        const opt = this.options[this.selectedIndex];
+        const salaInfo = document.getElementById("sala-info");
+
+        if (!opt.dataset.bloco) {
+            salaInfo.textContent = "Selecione uma sala para ver os detalhes";
+            return;
+        }
+
+        salaInfo.innerHTML = `
+            <ul class="list-unstyled mb-0">
+                <li><strong>Bloco:</strong> ${opt.dataset.bloco}</li>
+                <li><strong>Tipo:</strong> ${opt.dataset.tipo}</li>
+                <li><strong>Capacidade:</strong> ${opt.dataset.capacidade} pessoas</li>
+            </ul>
+        `;
+
+        verificarDisponibilidade();
+    });
+
+    // === VERIFICAR DISPONIBILIDADE (FUNCIONA EM AMBOS OS MODOS) ===
+    async function verificarDisponibilidade() {
+        let salaId = document.getElementById("salaSelect").value;
+        let data;
+        const turno = document.getElementById("turnoSelect").value;
+        const agendamentoId = document.getElementById("agendamentoId")?.value || null;
+
+        // CORREÇÃO: No modo edição, usa a data original do campo hidden
+        if (isEditMode) {
+            data = document.getElementById("dataOriginal").value;
+        } else {
+            data = document.getElementById("dataInput").value;
+        }
+
+        // Para novos agendamentos, verifica repetição
+        const repeatFor = !isEditMode ? parseInt(document.getElementById("repeat-for-input")?.value || 1) : 1;
+
+        const div = document.getElementById("disponibilidade");
+
+        console.log("Verificando disponibilidade:", {
+            isEditMode, salaId, data, turno, agendamentoId, repeatFor
+        });
+
+        if (!salaId || !data || !turno || turno === "0") {
+            if (isEditMode && !data) {
+                div.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Data original não encontrada</span>`;
             } else {
-                repetitionOptions.classList.add('d-none');
+                div.textContent = "Selecione sala, data e turno para verificar disponibilidade";
+            }
+            return;
+        }
+
+        // Verificar se a data não é no passado (apenas para novos agendamentos)
+        if (!isEditMode) {
+            const hoje = new Date().toISOString().split('T')[0];
+            if (data < hoje) {
+                div.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Não é possível agendar para datas passadas</span>`;
+                return;
+            }
+        }
+
+        if (isEditMode) {
+            div.innerHTML = `<div class="text-muted"><i class="bi bi-hourglass-split"></i> Verificando disponibilidade para atualização...</div>`;
+        } else {
+            div.innerHTML = `<div class="text-muted"><i class="bi bi-hourglass-split"></i> Verificando disponibilidade para ${repeatFor} semana(s)...</div>`;
+        }
+
+        try {
+            let url;
+            if (isEditMode) {
+                // Para edição: endpoint específico que considera o ID do agendamento atual
+                url = `/agendamento/disponibilidade-edicao?salaId=${salaId}&data=${data}&turno=${turno}&agendamentoId=${agendamentoId}`;
+            } else {
+                // Para novo agendamento: endpoint com repetição
+                url = `/agendamento/disponibilidade-recorrente?salaId=${salaId}&data=${data}&turno=${turno}&repeatFor=${repeatFor}`;
+            }
+
+            console.log("Fazendo requisição para:", url);
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+
+            const resultado = await response.json();
+            console.log("Resposta da API:", resultado);
+
+            if (resultado.disponivel) {
+                if (isEditMode) {
+                    div.innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill"></i> ${resultado.mensagem || 'Sala disponível para atualização!'}</span>`;
+                } else {
+                    div.innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill"></i> ${resultado.mensagem || 'Sala disponível!'}</span>`;
+                }
+            } else {
+                div.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill"></i> ${resultado.mensagem || 'Conflito de agendamento encontrado'}</span>`;
+            }
+        } catch (e) {
+            console.error('Erro na verificação:', e);
+            div.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Erro ao verificar disponibilidade: ${e.message}</span>`;
+        }
+    }
+
+    // === ATUALIZAR DIAS SELECIONADOS (APENAS NOVO AGENDAMENTO) ===
+    function atualizarDiasSelecionados() {
+        if (isEditMode) return;
+
+        const dataInput = document.getElementById('dataInput').value;
+        const repeatFor = parseInt(document.getElementById('repeat-for-input')?.value || 1);
+
+        if (!dataInput) {
+            if (document.getElementById('dias-selecionados')) {
+                document.getElementById('dias-selecionados').textContent = 'Selecione uma data';
+            }
+            return;
+        }
+
+        const dataBase = new Date(dataInput);
+        const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+        const diaBase = diasSemana[dataBase.getDay()];
+
+        if (repeatFor === 1) {
+            document.getElementById('dias-selecionados').textContent = `1 agendamento para ${diaBase}`;
+        } else {
+            const dataFinal = new Date(dataBase);
+            dataFinal.setDate(dataFinal.getDate() + ((repeatFor - 1) * 7));
+            document.getElementById('dias-selecionados').textContent =
+                `${repeatFor} agendamentos para ${diaBase} (até ${dataFinal.toLocaleDateString('pt-BR')})`;
+        }
+    }
+
+    // === PREPARAR ENVIO DO FORMULÁRIO ===
+    function prepararEnvioRecorrente() {
+        // Em modo edição, não envia repeatFor
+        if (isEditMode) {
+            return true;
+        }
+
+        // Para novo agendamento, sempre envia o campo repeatFor, mesmo que seja 1
+        const repeatFor = parseInt(document.getElementById('repeat-for-input')?.value || 1);
+
+        // Remove campos anteriores se existirem
+        document.querySelectorAll('[name="repeatFor"]').forEach(el => {
+            if (el.type === 'hidden') {
+                el.remove();
             }
         });
-    </script>
+
+        // Adiciona campo hidden se não for o input principal
+        const form = document.querySelector('form');
+        const existingInput = document.querySelector('input[name="repeatFor"][type="number"]');
+
+        if (!existingInput) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'repeatFor';
+            hiddenInput.value = repeatFor;
+            form.appendChild(hiddenInput);
+        }
+
+        return true;
+    }
+
+    // === INICIALIZAÇÃO - VERIFICAÇÃO AUTOMÁTICA ===
+    function inicializarVerificacao() {
+        // Verifica se todos os campos necessários estão preenchidos
+        const salaId = document.getElementById("salaSelect").value;
+        const dataOriginal = document.getElementById("dataOriginal")?.value;
+        const turno = document.getElementById("turnoSelect").value;
+
+        // Se estiver em modo edição E todos os campos estiverem preenchidos, verifica automaticamente
+        if (isEditMode && salaId && dataOriginal && turno && turno !== "0") {
+            console.log("Modo edição - verificando disponibilidade automaticamente com data original:", dataOriginal);
+            setTimeout(() => {
+                verificarDisponibilidade();
+            }, 500);
+        }
+
+        // Para novo agendamento, inicializa os dias selecionados
+        if (!isEditMode) {
+            atualizarDiasSelecionados();
+        }
+    }
+
+    // === EVENT LISTENERS (PARA TODOS OS MODOS) ===
+    document.getElementById("dataInput").addEventListener("change", function() {
+        if (!isEditMode) {
+            atualizarDiasSelecionados();
+        }
+        verificarDisponibilidade();
+    });
+
+    document.getElementById("turnoSelect").addEventListener("change", verificarDisponibilidade);
+    document.getElementById("salaSelect").addEventListener("change", verificarDisponibilidade);
+
+    if (!isEditMode) {
+        const repeatInput = document.getElementById("repeat-for-input");
+        if (repeatInput) {
+            repeatInput.addEventListener("change", function() {
+                atualizarDiasSelecionados();
+                verificarDisponibilidade();
+            });
+        }
+    }
+
+    // === INICIALIZAÇÃO QUANDO A PÁGINA CARREGA ===
+    document.addEventListener('DOMContentLoaded', function() {
+        // Aguarda um pouco para garantir que os campos estão preenchidos pelo Thymeleaf
+        setTimeout(() => {
+            inicializarVerificacao();
+
+            // Em modo edição, também verifica quando a sala ou turno mudam
+            if (isEditMode) {
+                console.log("Modo edição detectado - verificações automáticas ativadas");
+
+                // Preenche automaticamente as informações da sala se já estiver selecionada
+                const salaSelect = document.getElementById("salaSelect");
+                if (salaSelect.value) {
+                    salaSelect.dispatchEvent(new Event('change'));
+                }
+            }
+        }, 300);
+    });
+
+    // === INICIALIZAÇÃO PARA EDIÇÃO ===
+    if (isEditMode) {
+        // Garante que a data está formatada corretamente
+        const dataInput = document.getElementById('dataInput');
+        const dataOriginal = document.getElementById('dataOriginal');
+        if (dataOriginal && dataOriginal.value) {
+            // Formata a data para exibição (opcional)
+            const data = new Date(dataOriginal.value);
+            dataInput.title = `Data original: ${data.toLocaleDateString('pt-BR')}`;
+            console.log("Data original do agendamento:", dataOriginal.value);
+        }
+    }
+</script>
 </body>
 </html>

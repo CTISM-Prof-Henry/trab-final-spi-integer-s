@@ -2,19 +2,18 @@ package br.ufsm.csi.salas.service;
 
 import br.ufsm.csi.salas.dao.AgendamentoDAO;
 import br.ufsm.csi.salas.model.Agendamento;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class AgendamentoService {
-    private static AgendamentoDAO dao = new AgendamentoDAO();
+
+    private final AgendamentoDAO dao;
 
     public AgendamentoService() {
-        dao = new  AgendamentoDAO();
-    }
-
-    public AgendamentoService(AgendamentoDAO dao) {
-        AgendamentoService.dao = dao;
+        this.dao = new AgendamentoDAO();
     }
 
     public String inserir(Agendamento agendamento) {
@@ -27,7 +26,7 @@ public class AgendamentoService {
 
     public String excluir(int id) {
         if (dao.excluir(id)) {
-            return "Sucesso ao excluir agendamento";
+            return "Agendamento excluído com sucesso";
         } else {
             return "Erro ao excluir agendamento";
         }
@@ -41,7 +40,11 @@ public class AgendamentoService {
         return dao.buscarPorData(data);
     }
 
-    public List<Agendamento> listarPorStatus(int i) {
-        return dao.listarPorStatus(i);
+    public List<Agendamento> listarPorStatus(int status) {
+        return dao.listarPorStatus(status);
+    }
+
+    public Agendamento buscarPorId(int id) {
+        return dao.buscar(id);
     }
 }
