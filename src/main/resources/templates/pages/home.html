@@ -18,15 +18,27 @@
                     <i class="bi bi-door-open"></i>
                 </a>
             </div>
-
             <div class="centered-title-container text-center">
                 <h1>SALAS</h1>
                 <span>Agendamento</span>
             </div>
-
             <div class="login-section d-flex align-items-center">
-                <a href="#">login</a>
-                <span class="login-status-indicator"></span>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="login-link text-decoration-none me-2"
+                       th:if="${usuarioLogado != null}"
+                       th:href="@{/logout}">
+                        logout
+                    </a>
+                    <a href="#" class="login-link text-decoration-none me-2"
+                       th:unless="${usuarioLogado != null}"
+                       th:href="@{/login}">
+                        login
+                    </a>
+                    <span class="login-status-indicator"
+                          th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
+                          title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
+                    </span>
+                </div>
             </div>
         </div>
     </div>

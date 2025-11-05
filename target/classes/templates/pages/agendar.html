@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link th:href="@{/css/style.css}" rel="stylesheet">
+    <script th:src="@{/js/main.js}" defer></script>
+    <script th:src="@{/js/agendar.js}" defer></script>
 </head>
 <body>
 <header>
@@ -20,10 +22,22 @@
                 <span>Agendamento</span>
             </div>
             <div class="login-section d-flex align-items-center">
-                <span th:if="${usuarioLogado != null}" class="me-2">
-                    Olá, <span th:text="${usuarioLogado.nome}"></span>
-                </span>
-                <a th:href="@{/logout}">Sair</a>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="login-link text-decoration-none me-2"
+                       th:if="${usuarioLogado != null}"
+                       th:href="@{/logout}">
+                        logout
+                    </a>
+                    <a href="#" class="login-link text-decoration-none me-2"
+                       th:unless="${usuarioLogado != null}"
+                       th:href="@{/login}">
+                        login
+                    </a>
+                    <span class="login-status-indicator"
+                          th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
+                          title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -66,21 +80,19 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
 
-                    <form th:object="${agendamento}"
-                          method="post"
-                          onsubmit="return prepararEnvioRecorrente()"
-                          th:attr="action=${agendamento.id != null} ? @{/agendamento/editar} : @{/agendamento/salvar}">
+                    <form th:action="${agendamento.id != null} ? @{/agendamento/editar} : @{/agendamento/salvar}"
+                          th:object="${agendamento}" method="post"
+                          onsubmit="return prepararEnvioRecorrente()">
 
-                    <input type="hidden" th:field="*{id}" id="agendamentoId" />
+                        <input type="hidden" th:field="*{id}" id="agendamentoId" />
                         <input type="hidden" th:field="*{funcionario.id}" />
                         <input type="hidden" th:field="*{status}" />
-
-                        <!-- Campo hidden para envio da data (preenchido mesmo em readonly) -->
-                        <input type="hidden" th:field="*{data}" th:value="${agendamento.data}" id="dataHidden" />
+                        <!-- Campo hidden para armazenar a data original em formato ISO -->
+                        <input type="hidden" id="dataOriginal" th:value="${agendamento.data != null ? #temporals.format(agendamento.data, 'yyyy-MM-dd') : ''}" />
 
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <!-- USUÁRIO -->
+                                <!-- USUÁRIO (QUEM VAI USAR A SALA) -->
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Usuário*</label>
                                     <select class="form-select" th:field="*{usuario.id}" required>
@@ -93,6 +105,20 @@
                                     <div th:if="${#fields.hasErrors('usuario.id')}" class="text-danger small">
                                         Selecione um usuário
                                     </div>
+                                </div>
+
+                                <!-- FILTRO DE BLOCO -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Filtrar por Bloco</label>
+                                    <select class="form-select" id="bloco-filter">
+                                        <option value="">Todos os blocos</option>
+                                        <option value="A">Bloco A</option>
+                                        <option value="B">Bloco B</option>
+                                        <option value="C">Bloco C</option>
+                                        <option value="D">Bloco D</option>
+                                        <option value="E">Bloco E</option>
+                                    </select>
+                                    <small class="text-muted" id="bloco-help-text">Filtre as salas por bloco para encontrar mais facilmente</small>
                                 </div>
 
                                 <!-- SALA -->
@@ -116,28 +142,86 @@
                                 <!-- DATA -->
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Data do agendamento*</label>
-                                    <input type="date" class="form-control bg-light"
-                                           th:value="${#temporals.format(agendamento.data, 'yyyy-MM-dd')}"
-                                           readonly>
+
+                                    <!-- NOVO AGENDAMENTO - Campo editável -->
+                                    <input th:if="${agendamento.id == null}"
+                                           type="date"
+                                           class="form-control"
+                                           th:field="*{data}"
+                                           id="dataInput"
+                                           th:min="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}"
+                                           required>
+
+                                    <!-- EDIÇÃO - Mostra valor formatado + campo hidden -->
+                                    <div th:if="${agendamento.id != null}" class="d-flex align-items-center gap-2">
+                                        <!-- Campo hidden para manter o valor no formulário -->
+                                        <input type="hidden" th:field="*{data}">
+
+                                        <!-- Display visual da data -->
+                                        <div class="form-control bg-light d-flex align-items-center justify-content-between">
+                                            <span class="fw-bold text-dark">
+                                                <span th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}"></span>
+                                                -
+                                                <span th:text="${#temporals.dayOfWeekName(agendamento.data)}"></span>
+                                            </span>
+                                            <span class="text-muted">
+                                                <i class="bi bi-lock-fill"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
                                     <div th:if="${#fields.hasErrors('data')}" class="text-danger small">
                                         Data é obrigatória
                                     </div>
-                                    <div class="form-text text-info">
+
+                                    <div th:if="${agendamento.id != null}" class="form-text text-info">
                                         <i class="bi bi-info-circle"></i> A data não pode ser alterada em edições
                                     </div>
                                 </div>
 
-                                <!-- REPETIÇÃO (NOVOS AGENDAMENTOS) -->
+                                <!-- BOTÃO PARA MOSTRAR REPETIÇÃO (APENAS PARA NOVOS AGENDAMENTOS) -->
                                 <div th:if="${agendamento.id == null}" class="mb-3">
                                     <button type="button" class="btn btn-outline-secondary" id="btn-repetir">
                                         <i class="bi bi-arrow-repeat"></i> Repetir agendamento
                                     </button>
                                 </div>
+
+                                <!-- REPETIÇÃO (OCULTO INICIALMENTE) - APENAS PARA NOVOS AGENDAMENTOS -->
                                 <div th:if="${agendamento.id == null}" id="repetition-options" class="d-none mb-3">
-                                    <!-- conteúdo igual -->
+                                    <div class="card border-warning">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-warning">
+                                                <i class="bi bi-info-circle"></i> Agendamento Recorrente
+                                            </h6>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Repetir por quantas semanas?</label>
+                                                <div class="input-group" style="max-width: 200px;">
+                                                    <input type="number" class="form-control" id="repeat-for-input" name="repeatFor" value="1" min="1" max="52">
+                                                    <span class="input-group-text">semanas</span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Serão criados agendamentos para o mesmo dia da semana pelas próximas semanas
+                                                </small>
+                                            </div>
+
+                                            <div class="mt-2">
+                                                <small class="text-info">
+                                                    <i class="bi bi-calendar-week"></i>
+                                                    <span id="dias-selecionados">1 agendamento será criado</span>
+                                                </small>
+                                            </div>
+
+                                            <div class="mt-2">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-ocultar-repetir">
+                                                    <i class="bi bi-eye-slash"></i> Ocultar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- MENSAGEM EDIÇÃO -->
+                                <!-- MENSAGEM PARA EDIÇÃO (NÃO PERMITE REPETIÇÃO) -->
                                 <div th:if="${agendamento.id != null}" class="alert alert-info">
                                     <i class="bi bi-info-circle"></i>
                                     <strong>Modo de edição:</strong> Não é possível alterar a data original ou criar agendamentos recorrentes.
@@ -150,9 +234,9 @@
                                     <label class="form-label fw-bold">Turno*</label>
                                     <select class="form-select" th:field="*{turno}" id="turnoSelect" required>
                                         <option value="0">Selecione o turno...</option>
-                                        <option value="1" th:selected="${agendamento.turno == 1}">Manhã (06:00 - 11:59)</option>
-                                        <option value="2" th:selected="${agendamento.turno == 2}">Tarde (12:00 - 17:59)</option>
-                                        <option value="3" th:selected="${agendamento.turno == 3}">Noite (18:00 - 23:59)</option>
+                                        <option value="1">Manhã (06:00 - 11:59)</option>
+                                        <option value="2">Tarde (12:00 - 17:59)</option>
+                                        <option value="3">Noite (18:00 - 23:59)</option>
                                     </select>
                                     <div th:if="${#fields.hasErrors('turno')}" class="text-danger small">
                                         Selecione um turno
@@ -177,20 +261,20 @@
                                     </div>
                                 </div>
 
-                                <!-- STATUS (edição) -->
+                                <!-- STATUS (apenas para visualização em edição) -->
                                 <div th:if="${agendamento.id != null}" class="card bg-light border-0">
                                     <div class="card-body">
                                         <h6 class="fw-bold"><i class="bi bi-info-circle"></i> Status do Agendamento</h6>
                                         <span th:switch="${agendamento.status}">
-                        <span th:case="1" class="badge bg-success">Aprovado</span>
-                        <span th:case="2" class="badge bg-warning">Reprovado</span>
-                        <span th:case="3" class="badge bg-secondary">Pendente</span>
-                        <span th:case="*" class="badge bg-info">Desconhecido</span>
-                    </span>
+                                            <span th:case="1" class="badge bg-success">Aprovado</span>
+                                            <span th:case="2" class="badge bg-warning">Reprovado</span>
+                                            <span th:case="3" class="badge bg-secondary">Pendente</span>
+                                            <span th:case="*" class="badge bg-info">Desconhecido</span>
+                                        </span>
                                     </div>
                                 </div>
 
-                                <!-- DATA ORIGINAL (edição) -->
+                                <!-- DATA ORIGINAL (APENAS EXIBIÇÃO EM EDIÇÃO) -->
                                 <div th:if="${agendamento.id != null && agendamento.data != null}" class="card bg-light border-0 mt-3">
                                     <div class="card-body">
                                         <h6 class="fw-bold"><i class="bi bi-calendar-event"></i> Data Original do Agendamento</h6>
@@ -221,268 +305,5 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // === VERIFICAR SE É MODO EDIÇÃO ===
-    const isEditMode = document.getElementById('agendamentoId') && document.getElementById('agendamentoId').value !== '';
-
-    // === CONTROLE DO BOTÃO REPETIR (APENAS NOVO AGENDAMENTO) ===
-    if (!isEditMode) {
-        document.getElementById('btn-repetir').addEventListener('click', function() {
-            const repetitionOptions = document.getElementById('repetition-options');
-            repetitionOptions.classList.remove('d-none');
-            this.classList.add('d-none');
-            atualizarDiasSelecionados();
-            verificarDisponibilidade();
-        });
-
-        document.getElementById('btn-ocultar-repetir').addEventListener('click', function() {
-            const repetitionOptions = document.getElementById('repetition-options');
-            const btnRepetir = document.getElementById('btn-repetir');
-            repetitionOptions.classList.add('d-none');
-            btnRepetir.classList.remove('d-none');
-            // Reset para 1 semana quando ocultar
-            document.getElementById('repeat-for-input').value = 1;
-            verificarDisponibilidade();
-        });
-    }
-
-    // === MOSTRAR INFORMAÇÕES DA SALA ===
-    document.getElementById("salaSelect").addEventListener("change", function () {
-        const opt = this.options[this.selectedIndex];
-        const salaInfo = document.getElementById("sala-info");
-
-        if (!opt.dataset.bloco) {
-            salaInfo.textContent = "Selecione uma sala para ver os detalhes";
-            return;
-        }
-
-        salaInfo.innerHTML = `
-            <ul class="list-unstyled mb-0">
-                <li><strong>Bloco:</strong> ${opt.dataset.bloco}</li>
-                <li><strong>Tipo:</strong> ${opt.dataset.tipo}</li>
-                <li><strong>Capacidade:</strong> ${opt.dataset.capacidade} pessoas</li>
-            </ul>
-        `;
-
-        verificarDisponibilidade();
-    });
-
-    // === VERIFICAR DISPONIBILIDADE (FUNCIONA EM AMBOS OS MODOS) ===
-    async function verificarDisponibilidade() {
-        let salaId = document.getElementById("salaSelect").value;
-        let data;
-        const turno = document.getElementById("turnoSelect").value;
-        const agendamentoId = document.getElementById("agendamentoId")?.value || null;
-
-        // CORREÇÃO: No modo edição, usa a data original do campo hidden
-        if (isEditMode) {
-            data = document.getElementById("dataOriginal").value;
-        } else {
-            data = document.getElementById("dataInput").value;
-        }
-
-        // Para novos agendamentos, verifica repetição
-        const repeatFor = !isEditMode ? parseInt(document.getElementById("repeat-for-input")?.value || 1) : 1;
-
-        const div = document.getElementById("disponibilidade");
-
-        console.log("Verificando disponibilidade:", {
-            isEditMode, salaId, data, turno, agendamentoId, repeatFor
-        });
-
-        if (!salaId || !data || !turno || turno === "0") {
-            if (isEditMode && !data) {
-                div.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Data original não encontrada</span>`;
-            } else {
-                div.textContent = "Selecione sala, data e turno para verificar disponibilidade";
-            }
-            return;
-        }
-
-        // Verificar se a data não é no passado (apenas para novos agendamentos)
-        if (!isEditMode) {
-            const hoje = new Date().toISOString().split('T')[0];
-            if (data < hoje) {
-                div.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Não é possível agendar para datas passadas</span>`;
-                return;
-            }
-        }
-
-        if (isEditMode) {
-            div.innerHTML = `<div class="text-muted"><i class="bi bi-hourglass-split"></i> Verificando disponibilidade para atualização...</div>`;
-        } else {
-            div.innerHTML = `<div class="text-muted"><i class="bi bi-hourglass-split"></i> Verificando disponibilidade para ${repeatFor} semana(s)...</div>`;
-        }
-
-        try {
-            let url;
-            if (isEditMode) {
-                // Para edição: endpoint específico que considera o ID do agendamento atual
-                url = `/agendamento/disponibilidade-edicao?salaId=${salaId}&data=${data}&turno=${turno}&agendamentoId=${agendamentoId}`;
-            } else {
-                // Para novo agendamento: endpoint com repetição
-                url = `/agendamento/disponibilidade-recorrente?salaId=${salaId}&data=${data}&turno=${turno}&repeatFor=${repeatFor}`;
-            }
-
-            console.log("Fazendo requisição para:", url);
-
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-
-            const resultado = await response.json();
-            console.log("Resposta da API:", resultado);
-
-            if (resultado.disponivel) {
-                if (isEditMode) {
-                    div.innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill"></i> ${resultado.mensagem || 'Sala disponível para atualização!'}</span>`;
-                } else {
-                    div.innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill"></i> ${resultado.mensagem || 'Sala disponível!'}</span>`;
-                }
-            } else {
-                div.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill"></i> ${resultado.mensagem || 'Conflito de agendamento encontrado'}</span>`;
-            }
-        } catch (e) {
-            console.error('Erro na verificação:', e);
-            div.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Erro ao verificar disponibilidade: ${e.message}</span>`;
-        }
-    }
-
-    // === ATUALIZAR DIAS SELECIONADOS (APENAS NOVO AGENDAMENTO) ===
-    function atualizarDiasSelecionados() {
-        if (isEditMode) return;
-
-        const dataInput = document.getElementById('dataInput').value;
-        const repeatFor = parseInt(document.getElementById('repeat-for-input')?.value || 1);
-
-        if (!dataInput) {
-            if (document.getElementById('dias-selecionados')) {
-                document.getElementById('dias-selecionados').textContent = 'Selecione uma data';
-            }
-            return;
-        }
-
-        const dataBase = new Date(dataInput);
-        const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-        const diaBase = diasSemana[dataBase.getDay()];
-
-        if (repeatFor === 1) {
-            document.getElementById('dias-selecionados').textContent = `1 agendamento para ${diaBase}`;
-        } else {
-            const dataFinal = new Date(dataBase);
-            dataFinal.setDate(dataFinal.getDate() + ((repeatFor - 1) * 7));
-            document.getElementById('dias-selecionados').textContent =
-                `${repeatFor} agendamentos para ${diaBase} (até ${dataFinal.toLocaleDateString('pt-BR')})`;
-        }
-    }
-
-    // === PREPARAR ENVIO DO FORMULÁRIO ===
-    function prepararEnvioRecorrente() {
-        // Em modo edição, não envia repeatFor
-        if (isEditMode) {
-            return true;
-        }
-
-        // Para novo agendamento, sempre envia o campo repeatFor, mesmo que seja 1
-        const repeatFor = parseInt(document.getElementById('repeat-for-input')?.value || 1);
-
-        // Remove campos anteriores se existirem
-        document.querySelectorAll('[name="repeatFor"]').forEach(el => {
-            if (el.type === 'hidden') {
-                el.remove();
-            }
-        });
-
-        // Adiciona campo hidden se não for o input principal
-        const form = document.querySelector('form');
-        const existingInput = document.querySelector('input[name="repeatFor"][type="number"]');
-
-        if (!existingInput) {
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'repeatFor';
-            hiddenInput.value = repeatFor;
-            form.appendChild(hiddenInput);
-        }
-
-        return true;
-    }
-
-    // === INICIALIZAÇÃO - VERIFICAÇÃO AUTOMÁTICA ===
-    function inicializarVerificacao() {
-        // Verifica se todos os campos necessários estão preenchidos
-        const salaId = document.getElementById("salaSelect").value;
-        const dataOriginal = document.getElementById("dataOriginal")?.value;
-        const turno = document.getElementById("turnoSelect").value;
-
-        // Se estiver em modo edição E todos os campos estiverem preenchidos, verifica automaticamente
-        if (isEditMode && salaId && dataOriginal && turno && turno !== "0") {
-            console.log("Modo edição - verificando disponibilidade automaticamente com data original:", dataOriginal);
-            setTimeout(() => {
-                verificarDisponibilidade();
-            }, 500);
-        }
-
-        // Para novo agendamento, inicializa os dias selecionados
-        if (!isEditMode) {
-            atualizarDiasSelecionados();
-        }
-    }
-
-    // === EVENT LISTENERS (PARA TODOS OS MODOS) ===
-    document.getElementById("dataInput").addEventListener("change", function() {
-        if (!isEditMode) {
-            atualizarDiasSelecionados();
-        }
-        verificarDisponibilidade();
-    });
-
-    document.getElementById("turnoSelect").addEventListener("change", verificarDisponibilidade);
-    document.getElementById("salaSelect").addEventListener("change", verificarDisponibilidade);
-
-    if (!isEditMode) {
-        const repeatInput = document.getElementById("repeat-for-input");
-        if (repeatInput) {
-            repeatInput.addEventListener("change", function() {
-                atualizarDiasSelecionados();
-                verificarDisponibilidade();
-            });
-        }
-    }
-
-    // === INICIALIZAÇÃO QUANDO A PÁGINA CARREGA ===
-    document.addEventListener('DOMContentLoaded', function() {
-        // Aguarda um pouco para garantir que os campos estão preenchidos pelo Thymeleaf
-        setTimeout(() => {
-            inicializarVerificacao();
-
-            // Em modo edição, também verifica quando a sala ou turno mudam
-            if (isEditMode) {
-                console.log("Modo edição detectado - verificações automáticas ativadas");
-
-                // Preenche automaticamente as informações da sala se já estiver selecionada
-                const salaSelect = document.getElementById("salaSelect");
-                if (salaSelect.value) {
-                    salaSelect.dispatchEvent(new Event('change'));
-                }
-            }
-        }, 300);
-    });
-
-    // === INICIALIZAÇÃO PARA EDIÇÃO ===
-    if (isEditMode) {
-        // Garante que a data está formatada corretamente
-        const dataInput = document.getElementById('dataInput');
-        const dataOriginal = document.getElementById('dataOriginal');
-        if (dataOriginal && dataOriginal.value) {
-            // Formata a data para exibição (opcional)
-            const data = new Date(dataOriginal.value);
-            dataInput.title = `Data original: ${data.toLocaleDateString('pt-BR')}`;
-            console.log("Data original do agendamento:", dataOriginal.value);
-        }
-    }
-</script>
 </body>
 </html>

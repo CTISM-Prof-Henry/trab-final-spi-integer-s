@@ -276,3 +276,55 @@ body {
     margin-top: 1rem;
 }
 
+/* Estilos para a seção de login simplificada */
+.login-link {
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.login-link:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+/* Indicador de status */
+.login-status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.login-status-indicator.logged-in {
+    background-color: #28a745; /* Verde - logado */
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+}
+
+.login-status-indicator.logged-out {
+    background-color: #6c757d; /* Cinza - deslogado */
+    box-shadow: 0 0 8px rgba(108, 117, 125, 0.4);
+}
+
+/* Efeito de pulsação para usuário logado */
+.login-status-indicator.logged-in {
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}

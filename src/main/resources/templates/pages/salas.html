@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link th:href="@{/css/style.css}" rel="stylesheet">
+    <script th:src="@{/js/main.js}" defer></script>
+    <script th:src="@{/js/salas.js}" defer></script>
 </head>
 <body>
 <header>
@@ -22,8 +24,22 @@
                 <span>Agendamento</span>
             </div>
             <div class="login-section d-flex align-items-center">
-                <a href="#">login</a>
-                <span class="login-status-indicator"></span>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="login-link text-decoration-none me-2"
+                       th:if="${usuarioLogado != null}"
+                       th:href="@{/logout}">
+                        logout
+                    </a>
+                    <a href="#" class="login-link text-decoration-none me-2"
+                       th:unless="${usuarioLogado != null}"
+                       th:href="@{/login}">
+                        login
+                    </a>
+                    <span class="login-status-indicator"
+                          th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
+                          title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -189,7 +205,7 @@
                         <th>Tipo</th>
                         <th>Capacidade</th>
                         <th>Status</th>
-                        <th width="120">Ações</th>
+                        <th width="140">Ações</th> <!-- Aumentei para 140 para acomodar o novo botão -->
                     </tr>
                     </thead>
                     <tbody>
@@ -199,18 +215,28 @@
                         <td th:text="${sala.tipo}"></td>
                         <td th:text="${sala.capacidade} + ' pessoas'"></td>
                         <td>
-                            <span th:if="${salasEmUsoIds != null and #lists.contains(salasEmUsoIds, sala.id)}"
-                                  class="badge bg-warning"><i class="bi bi-person-fill"></i> Em Uso</span>
+            <span th:if="${salasEmUsoIds != null and #lists.contains(salasEmUsoIds, sala.id)}"
+                  class="badge bg-warning"><i class="bi bi-person-fill"></i> Em Uso</span>
                             <span th:unless="${salasEmUsoIds != null and #lists.contains(salasEmUsoIds, sala.id)}"
                                   class="badge bg-success"><i class="bi bi-check-circle"></i> Livre</span>
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group">
+                                <!-- NOVO BOTÃO: Agendar nesta Sala -->
+                                <a th:href="@{/agendamento/novo(salaId=${sala.id})}"
+                                   class="btn btn-outline-success"
+                                   title="Agendar nesta Sala">
+                                    <i class="bi bi-calendar-plus"></i>
+                                </a>
+
+                                <!-- Botão Editar -->
                                 <a th:href="@{/sala/editar/{id}(id=${sala.id})}"
                                    class="btn btn-outline-primary"
                                    title="Editar Sala">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+
+                                <!-- Botão Excluir -->
                                 <a th:href="@{/sala/excluir/{id}(id=${sala.id})}"
                                    class="btn btn-outline-danger btn-excluir"
                                    title="Excluir Sala"
@@ -238,78 +264,5 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    // Filtros da tabela
-    function filtrarTabela() {
-        const filtroCapacidade = parseInt(document.getElementById('capacidade-filter').value) || 0;
-        const filtroTipo = document.getElementById('tipo-filter').value.toLowerCase();
-        const filtroStatus = document.getElementById('status-filter').value.toLowerCase();
-        const linhas = document.querySelectorAll('tbody tr');
-
-        linhas.forEach(linha => {
-            if (linha.cells.length > 1) {
-                const capacidadeTexto = linha.cells[3].textContent;
-                const capacidade = parseInt(capacidadeTexto) || 0;
-                const tipo = linha.cells[2].textContent.toLowerCase();
-                const status = linha.cells[4].textContent.toLowerCase();
-
-                const mostraCapacidade = capacidade >= filtroCapacidade;
-                const mostraTipo = !filtroTipo || tipo.includes(filtroTipo);
-                const mostraStatus = !filtroStatus ||
-                    (filtroStatus === 'livre' && status.includes('livre')) ||
-                    (filtroStatus === 'em-uso' && status.includes('em uso'));
-
-                linha.style.display = (mostraCapacidade && mostraTipo && mostraStatus) ? '' : 'none';
-            }
-        });
-    }
-
-    function limparFiltros() {
-        document.getElementById('capacidade-filter').value = '0';
-        document.getElementById('tipo-filter').value = '';
-        document.getElementById('status-filter').value = '';
-        filtrarTabela();
-    }
-
-    // Atualizar hora atual
-    function atualizarHora() {
-        const agora = new Date();
-        const hora = agora.getHours().toString().padStart(2, '0');
-        const minutos = agora.getMinutes().toString().padStart(2, '0');
-        document.getElementById('hora-atual').textContent = hora + ':' + minutos;
-    }
-
-    // Confirmação de exclusão
-    document.addEventListener('DOMContentLoaded', function() {
-        const botoesExcluir = document.querySelectorAll('.btn-excluir');
-
-        botoesExcluir.forEach(botao => {
-            botao.addEventListener('click', function(e) {
-                const salaId = this.getAttribute('data-sala-id');
-                const salaBloco = this.getAttribute('data-sala-bloco');
-                const confirmacao = confirm('Tem certeza que deseja excluir a sala ' + salaBloco + ' ' + salaId + '?');
-
-                if (!confirmacao) {
-                    e.preventDefault();
-                }
-            });
-        });
-
-        // Atualizar hora inicial a cada minuto
-        atualizarHora();
-        setInterval(atualizarHora, 60000);
-
-        // Aplicar filtros quando os selects mudarem
-        document.getElementById('capacidade-filter').addEventListener('change', filtrarTabela);
-        document.getElementById('tipo-filter').addEventListener('change', filtrarTabela);
-        document.getElementById('status-filter').addEventListener('change', filtrarTabela);
-    });
-
-    // Auto-refresh para atualizar os status
-    setTimeout(() => {
-        window.location.reload();
-    }, 120000);
-</script>
 </body>
 </html>

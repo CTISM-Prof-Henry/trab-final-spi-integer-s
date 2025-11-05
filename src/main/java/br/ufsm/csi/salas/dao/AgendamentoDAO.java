@@ -86,6 +86,9 @@ public class AgendamentoDAO {
         stmt.setInt(5, agendamento.getTurno());
         stmt.setDate(6, Date.valueOf(agendamento.getData()));
         stmt.setDate(7, Date.valueOf(agendamento.getData()));
+        if (agendamento.getId() != null) {
+            stmt.setInt(8, agendamento.getId());
+        }
         stmt.execute();
     }
 

@@ -44,17 +44,22 @@ public class AgendamentoController {
     // NOVO AGENDAMENTO - GET
     // =====================================
     @GetMapping("/novo")
-    public String novoAgendamento(Model model) {
-        if (!model.containsAttribute("agendamento")) {
-            Agendamento agendamento = new Agendamento();
-            agendamento.setStatus(3); // status padrão: Pendente
-            model.addAttribute("agendamento", agendamento);
+    public String novoAgendamento(@RequestParam(name = "salaId", required = false) Integer salaId,
+                                  Model model) {
+
+        Agendamento agendamento = new Agendamento();
+        agendamento.setStatus(3);
+
+        // Se foi passado um salaId, pré-seleciona a sala
+        if (salaId != null) {
+            Sala sala = salaService.buscar(salaId);
+            if (sala != null) {
+                agendamento.setSala(sala);
+            }
         }
 
-        // Garante que os selects sempre tenham dados
-        if (!model.containsAttribute("salas") || !model.containsAttribute("usuarios")) {
-            carregarDadosFormulario(model);
-        }
+        model.addAttribute("agendamento", agendamento);
+        carregarDadosFormulario(model);
 
         return "pages/agendar";
     }
@@ -588,5 +593,23 @@ public class AgendamentoController {
         }
 
         return resultado;
+    }
+
+    @GetMapping("/finalizar/{id}")
+    public String finalizarAgendamento(@PathVariable("id") Integer id,
+                                       RedirectAttributes redirectAttributes) {
+        try {
+            Agendamento agendamento = agendamentoService.buscarPorId(id);
+            if (agendamento != null) {
+                agendamento.setStatus(4); // Status Finalizado
+                String mensagem = agendamentoService.alterar(agendamento);
+                redirectAttributes.addFlashAttribute("mensagemSucesso", mensagem);
+            } else {
+                redirectAttributes.addFlashAttribute("mensagemErro", "Agendamento não encontrado!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao finalizar agendamento: " + e.getMessage());
+        }
+        return "redirect:/agendamento";
     }
 }
