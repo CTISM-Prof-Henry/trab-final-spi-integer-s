@@ -19,3 +19,8 @@ O projeto foi desenvolvido por:
 Acesse a documentação e tutoriais de uso do projeto pelo link:
 
 * [Documentação](https://CTISM-Prof-Henry.github.io/trab-final-spi-integer-s)
+
+
+Arquivo Docker-Compose para download:
+
+* [docker-compose.yaml](https://github.com/user-attachments/files/23468586/docker-compose.yaml)
