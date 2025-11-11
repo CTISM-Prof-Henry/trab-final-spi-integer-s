@@ -13,7 +13,7 @@ public class ConectarBanco {
 
         System.out.println("Driver carregado");
 
-        String url = "jdbc:postgresql://localhost:5432/salas";
+        String url = "jdbc:postgresql://db:5432/salas";
         String user = "postgres";
         String senha = "1234";
         return DriverManager.getConnection(url, user, senha);
