@@ -11,8 +11,6 @@ WORKDIR /app
 
 RUN git clone https://github.com/CTISM-Prof-Henry/trab-final-spi-integer-s.git ./
 
-WORKDIR /app/Salas
-
 RUN mvn clean package -DskipTests
 
 VOLUME ["/var/log/app"]
