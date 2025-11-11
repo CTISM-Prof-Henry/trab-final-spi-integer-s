@@ -27,14 +27,10 @@
                 <div class="d-flex align-items-center">
                     <a href="#" class="login-link text-decoration-none me-2"
                        th:if="${usuarioLogado != null}"
-                       th:href="@{/logout}">
-                        logout
-                    </a>
+                       th:href="@{/logout}">logout</a>
                     <a href="#" class="login-link text-decoration-none me-2"
                        th:unless="${usuarioLogado != null}"
-                       th:href="@{/login}">
-                        login
-                    </a>
+                       th:href="@{/login}">login</a>
                     <span class="login-status-indicator"
                           th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
                           title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
@@ -43,6 +39,7 @@
             </div>
         </div>
     </div>
+
     <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -50,15 +47,9 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" th:href="@{/agendamento}">agendamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/sala}">salas</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/home}">início</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/agendamento}">agendamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/sala}">salas</a></li>
                 </ul>
             </div>
         </div>
@@ -66,6 +57,7 @@
 </header>
 
 <main class="container my-4">
+    <!-- Mensagens -->
     <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle-fill"></i>
         <span th:text="${mensagemSucesso}"></span>
@@ -77,38 +69,32 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
+    <!-- Cards -->
     <div class="row justify-content-center g-4">
-        <!-- Card Agendamentos Pendentes -->
         <div class="col-lg-3 col-md-6">
             <div class="card info-card shadow-sm border-0">
                 <div class="card-body text-center">
-                    <h1 class="fw-bold text-warning mb-0" th:text="${agendamentosPendentes}">0</h1>
-                    <p class="card-subtitle text-body-secondary mt-2">Pendentes</p>
+                    <h1 class="fw-bold text-primary mb-0" th:text="${totalAbertos}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">Abertos</p>
                 </div>
             </div>
         </div>
-
-        <!-- Card Aprovados -->
         <div class="col-lg-3 col-md-6">
             <div class="card info-card shadow-sm border-0">
                 <div class="card-body text-center">
-                    <h1 class="fw-bold text-success mb-0" th:text="${agendamentosAprovados}">0</h1>
-                    <p class="card-subtitle text-body-secondary mt-2">Aprovados</p>
+                    <h1 class="fw-bold text-warning mb-0" th:text="${totalEmUso}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">Em Uso</p>
                 </div>
             </div>
         </div>
-
-        <!-- Card Agendados Hoje -->
         <div class="col-lg-3 col-md-6">
             <div class="card info-card shadow-sm border-0">
                 <div class="card-body text-center">
-                    <h1 class="fw-bold text-info mb-0" th:text="${agendamentosHoje}">0</h1>
-                    <p class="card-subtitle text-body-secondary mt-2">Agendados Hoje</p>
+                    <h1 class="fw-bold text-success mb-0" th:text="${totalFinalizados}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">Finalizados</p>
                 </div>
             </div>
         </div>
-
-        <!-- Card Novo Agendamento -->
         <div class="col-lg-3 col-md-6">
             <div class="card action-card shadow-sm border-0">
                 <a th:href="@{/agendamento/novo}" class="text-decoration-none">
@@ -121,62 +107,57 @@
         </div>
     </div>
 
-    <!-- Indicador de Data -->
-    <div class="text-center mb-3">
+    <!-- Indicador de Turno Atual -->
+    <div class="text-center mb-3 mt-3">
         <span class="badge bg-info fs-6 p-2">
-            <i class="bi bi-calendar"></i>
-            Data: <span id="data-atual"></span>
+            <i class="bi bi-clock"></i>
+            Turno atual: <span id="turno-atual" th:text="${turnoAtual}">Manhã</span>
+            - <span id="hora-atual"></span>
         </span>
     </div>
 
-    <!-- Filtros e Tabela -->
+    <!-- Filtros -->
     <div class="card mt-4 border-0 shadow-sm">
-        <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros</h5>
-        </div>
+        <div class="card-header bg-light"><h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros</h5></div>
         <div class="card-body">
             <form th:action="@{/agendamento}" method="get" id="filtros-form">
                 <div class="row g-3 align-items-center">
-                    <!-- Filtro por Data -->
                     <div class="col-auto">
                         <label for="data-filter" class="col-form-label fw-bold">Data:</label>
                     </div>
                     <div class="col-auto">
-                        <input type="date" class="form-control" id="data-filter" name="data">
+                        <input type="date" class="form-control" id="data-filter" name="data"
+                               th:value="${param.data}" />
                     </div>
 
-                    <!-- Filtro por Status -->
                     <div class="col-auto">
                         <label for="status-filter" class="col-form-label fw-bold">Status:</label>
                     </div>
                     <div class="col-auto">
                         <select class="form-select" id="status-filter" name="status">
-                            <option value="">Todos</option>
-                            <option value="1">Aprovado</option>
-                            <option value="2">Reprovado</option>
-                            <option value="3">Pendente</option>
+                            <option value="" th:selected="${param.status == null}">Todos</option>
+                            <option value="1" th:selected="${param.status == '1'}">Aberto</option>
+                            <option value="2" th:selected="${param.status == '2'}">Em Uso</option>
+                            <option value="3" th:selected="${param.status == '3'}">Finalizado</option>
                         </select>
                     </div>
 
-                    <!-- Filtro por Bloco -->
                     <div class="col-auto">
                         <label for="bloco-filter" class="col-form-label fw-bold">Bloco:</label>
                     </div>
                     <div class="col-auto">
                         <select class="form-select" id="bloco-filter" name="bloco">
-                            <option value="">Todos</option>
+                            <option value="" th:selected="${param.bloco == null}">Todos</option>
                             <option th:each="bloco : ${blocos}"
                                     th:value="${bloco}"
-                                    th:text="${bloco}">
+                                    th:text="${bloco}"
+                                    th:selected="${param.bloco == bloco}">
                             </option>
                         </select>
                     </div>
 
-                    <!-- Botões -->
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-search"></i> Aplicar
-                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Aplicar</button>
                         <a th:href="@{/agendamento}" class="btn btn-outline-secondary ms-2">
                             <i class="bi bi-arrow-clockwise"></i> Limpar
                         </a>
@@ -186,7 +167,7 @@
         </div>
     </div>
 
-    <!-- Tabela de Agendamentos -->
+    <!-- Tabela -->
     <div class="card mt-3 border-0 shadow-sm">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Agendamentos</h5>
@@ -204,97 +185,74 @@
                         <th>Turno</th>
                         <th>Usuário</th>
                         <th>Status</th>
-                        <th width="140">Ações</th>
+                        <th width="180">Ações</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="agendamento : ${agendamentos}">
+                        <td th:text="${agendamento.id}">#</td>
+                        <td th:text="${agendamento.sala?.tipo ?: '-'}"></td>
+                        <td th:text="${agendamento.sala?.bloco ?: '-'}"></td>
+                        <td th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}">01/01/2025</td>
                         <td>
-                            <span th:text="${agendamento.id}">#</span>
-                        </td>
-                        <td>
-                            <span th:if="${agendamento.sala != null and agendamento.sala.tipo != null}"
-                                  th:text="${agendamento.sala.tipo}">Sala</span>
-                                            <span th:if="${agendamento.sala == null or agendamento.sala.tipo == null}"
-                                                  class="text-muted">-</span>
-                                        </td>
-                                        <td>
-                            <span th:if="${agendamento.sala != null and agendamento.sala.bloco != null}"
-                                  th:text="${agendamento.sala.bloco}">A</span>
-                                            <span th:if="${agendamento.sala == null or agendamento.sala.bloco == null}"
-                                                  class="text-muted">-</span>
-                                        </td>
-                                        <td>
-                            <span th:if="${agendamento.data != null}"
-                                  th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}">01/01/2024</span>
-                                            <span th:if="${agendamento.data == null}" class="text-muted">-</span>
-                                        </td>
-                                        <td>
-                            <span th:if="${agendamento.turno != null}" th:switch="${agendamento.turno}">
+                            <span th:switch="${agendamento.turno}">
                                 <span th:case="1" class="badge bg-primary">Manhã</span>
-                                <span th:case="2" class="badge bg-warning">Tarde</span>
+                                <span th:case="2" class="badge bg-warning text-dark">Tarde</span>
                                 <span th:case="3" class="badge bg-dark">Noite</span>
-                                <span th:case="*" class="badge bg-secondary" th:text="${agendamento.turno}"></span>
+                                <span th:case="*" class="badge bg-secondary">-</span>
                             </span>
-                                            <span th:if="${agendamento.turno == null}" class="badge bg-secondary">-</span>
-                                        </td>
-                                        <td>
-                            <span th:if="${agendamento.usuario != null and agendamento.usuario.nome != null}"
-                                  th:text="${agendamento.usuario.nome}">Usuário</span>
-                                            <span th:if="${agendamento.usuario == null or agendamento.usuario.nome == null}"
-                                                  class="text-muted">-</span>
-                                        </td>
-                                        <td>
-                            <span th:if="${agendamento.status != null}" th:switch="${agendamento.status}">
-                                <span th:case="1" class="badge bg-success">Aprovado</span>
-                                <span th:case="2" class="badge bg-danger">Reprovado</span>
-                                <span th:case="3" class="badge bg-warning">Pendente</span>
-                                <span th:case="4" class="badge bg-info">Finalizado</span>
-                                <span th:case="*" class="badge bg-secondary" th:text="${agendamento.status}"></span>
+                        </td>
+                        <td th:text="${agendamento.usuario?.nome ?: '-'}"></td>
+                        <td>
+                            <span th:switch="${agendamento.status}">
+                                <span th:case="1" class="badge bg-primary">Aberto</span>
+                                <span th:case="2" class="badge bg-warning text-dark">Em Uso</span>
+                                <span th:case="3" class="badge bg-success">Finalizado</span>
+                                <span th:case="*" class="badge bg-secondary">-</span>
                             </span>
-                            <span th:if="${agendamento.status == null}" class="badge bg-secondary">-</span>
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group">
-                                <!-- Botão Editar (NÃO aparece se status for Finalizado) -->
-                                <a th:if="${agendamento.id != null and agendamento.status != 4}"
+
+                                <!-- Botão de Editar -->
+                                <a th:if="${agendamento.id != null and agendamento.status != 3}"
                                    th:href="@{|/agendamento/editar/${agendamento.id}|}"
                                    class="btn btn-outline-primary"
                                    title="Editar Agendamento">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <!-- Botão Finalizar (só aparece se status for Aprovado ou Pendente) -->
-                                <a th:if="${agendamento.id != null and (agendamento.status == 1 or agendamento.status == 3)}"
-                                   th:href="@{|/agendamento/finalizar/${agendamento.id}|}"
-                                   class="btn btn-outline-success btn-finalizar"
-                                   title="Finalizar Agendamento"
-                                   onclick="return confirm('Tem certeza que deseja finalizar este agendamento? Esta ação não pode ser desfeita.')">
+                                <!-- Quando estiver Aberto -->
+                                <a th:if="${agendamento.status == 1}"
+                                   th:href="@{'/agendamento/em-uso/' + ${agendamento.id}}"
+                                   class="btn btn-warning"
+                                   title="Colocar em uso">
+                                    <i class="bi bi-play-circle"></i>
+                                </a>
+
+                                <!-- Quando estiver Em Uso -->
+                                <a th:if="${agendamento.status == 2}"
+                                   th:href="@{'/agendamento/finalizar/' + ${agendamento.id}}"
+                                   class="btn btn-success"
+                                   title="Finalizar Agendamento">
                                     <i class="bi bi-check-circle"></i>
                                 </a>
 
-                                <!-- Botão Excluir (NÃO aparece se status for Finalizado) -->
-                                <a th:if="${agendamento.id != null and agendamento.status != 4}"
+                                <!-- Botão Excluir -->
+                                <a th:if="${agendamento.id != null and agendamento.status != 3}"
                                    th:href="@{|/agendamento/excluir/${agendamento.id}|}"
-                                   class="btn btn-outline-danger btn-excluir"
-                                   title="Excluir Agendamento"
-                                   onclick="return confirm('Tem certeza que deseja excluir este agendamento?')">
+                                   class="btn btn-outline-danger"
+                                   title="Excluir Agendamento">
                                     <i class="bi bi-trash"></i>
                                 </a>
-
-                                <!-- Estado Finalizado (sem ações) -->
-                                <span th:if="${agendamento.id != null and agendamento.status == 4}"
-                                      class="text-muted small"
-                                      title="Agendamento Finalizado - Nenhuma ação permitida">
-                    <i class="bi bi-lock"></i> Finalizado
-                </span>
 
                                 <!-- Agendamento sem ID -->
                                 <span th:if="${agendamento.id == null}"
                                       class="text-muted small"
                                       title="Agendamento sem ID">
-                    <i class="bi bi-exclamation-triangle"></i> Sem ID
-                </span>
+                                    <i class="bi bi-exclamation-triangle"></i> Sem ID
+                                </span>
+
                             </div>
                         </td>
                     </tr>
@@ -316,5 +274,16 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const span = document.getElementById("data-atual");
+        if (span) {
+            const hoje = new Date();
+            span.textContent = hoje.toLocaleDateString('pt-BR', {
+                weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
+            });
+        }
+    });
+</script>
 </body>
 </html>

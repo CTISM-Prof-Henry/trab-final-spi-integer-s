@@ -117,6 +117,8 @@
                                         <option value="C">Bloco C</option>
                                         <option value="D">Bloco D</option>
                                         <option value="E">Bloco E</option>
+                                        <option value="F">Bloco F</option>
+                                        <option value="G">Bloco G</option>
                                     </select>
                                     <small class="text-muted" id="bloco-help-text">Filtre as salas por bloco para encontrar mais facilmente</small>
                                 </div>
@@ -266,23 +268,11 @@
                                     <div class="card-body">
                                         <h6 class="fw-bold"><i class="bi bi-info-circle"></i> Status do Agendamento</h6>
                                         <span th:switch="${agendamento.status}">
-                                            <span th:case="1" class="badge bg-success">Aprovado</span>
-                                            <span th:case="2" class="badge bg-warning">Reprovado</span>
-                                            <span th:case="3" class="badge bg-secondary">Pendente</span>
+                                            <span th:case="1" class="badge bg-success">Aberto</span>
+                                            <span th:case="2" class="badge bg-warning">Em Uso</span>
+                                            <span th:case="3" class="badge bg-secondary">Finalizado</span>
                                             <span th:case="*" class="badge bg-info">Desconhecido</span>
                                         </span>
-                                    </div>
-                                </div>
-
-                                <!-- DATA ORIGINAL (APENAS EXIBIÇÃO EM EDIÇÃO) -->
-                                <div th:if="${agendamento.id != null && agendamento.data != null}" class="card bg-light border-0 mt-3">
-                                    <div class="card-body">
-                                        <h6 class="fw-bold"><i class="bi bi-calendar-event"></i> Data Original do Agendamento</h6>
-                                        <span class="text-primary fw-bold" th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}"></span>
-                                        <div class="small text-muted mt-1">
-                                            Dia da semana:
-                                            <span th:text="${#temporals.dayOfWeekName(agendamento.data)}"></span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

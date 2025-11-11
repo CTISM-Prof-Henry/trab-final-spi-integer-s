@@ -192,31 +192,33 @@ public class AgendamentoDAO {
     }
 
     private void montaAgendamento(List<Agendamento> agendamentos, PreparedStatement stmt) throws SQLException {
-        stmt.execute();
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                SalaDAO salaDAO = new SalaDAO();
+                Sala sala = salaDAO.buscar(rs.getInt("idsala"));
 
-        while (stmt.getResultSet().next()) {
-            SalaDAO salaDAO = new SalaDAO();
-            Sala sala = salaDAO.buscar(stmt.getResultSet().getInt("idsala"));
+                FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
+                Funcionario funcionario = funcionarioDAO.buscar(rs.getInt("idfunc"));
 
-            FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
-            Funcionario funcionario = funcionarioDAO.buscar(stmt.getResultSet().getInt("idfunc"));
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                Usuario usuario = usuarioDAO.buscar(rs.getInt("idusuario"));
 
-            UsuarioDAO usuarioDAO = new UsuarioDAO();
-            Usuario usuario = usuarioDAO.buscar(stmt.getResultSet().getInt("idusuario"));
+                Agendamento agendamento = new Agendamento();
 
-            Agendamento agendamento = new Agendamento();
+                agendamento.setId(rs.getInt("id"));
+                agendamento.setSala(sala);
+                agendamento.setFuncionario(funcionario);
+                agendamento.setUsuario(usuario);
+                agendamento.setStatus(rs.getInt("status"));
+                agendamento.setTurno(rs.getInt("turno"));
+                agendamento.setData(rs.getDate("data").toLocalDate());
+                agendamento.setDatacadastro(rs.getDate("datacadastro").toLocalDate());
 
-            agendamento.setSala(sala);
-            agendamento.setFuncionario(funcionario);
-            agendamento.setUsuario(usuario);
-            agendamento.setStatus(stmt.getResultSet().getInt("status"));
-            agendamento.setTurno(stmt.getResultSet().getInt("turno"));
-            agendamento.setData(stmt.getResultSet().getDate("data").toLocalDate());
-            agendamento.setDatacadastro(stmt.getResultSet().getDate("datacadastro").toLocalDate());
-
-            agendamentos.add(agendamento);
+                agendamentos.add(agendamento);
+            }
         }
     }
+
 
     public List<Agendamento> listarPorStatus(int i) {
         List<Agendamento> agendamentos = new ArrayList<>();

@@ -38,6 +38,37 @@ function inicializarAgendamentos() {
     }, 120000);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const horaSpan = document.getElementById("hora-atual");
+    const turnoSpan = document.getElementById("turno-atual");
+
+    function atualizarRelogioETurno() {
+        const agora = new Date();
+        const horas = agora.getHours();
+        const minutos = agora.getMinutes().toString().padStart(2, '0');
+        const segundos = agora.getSeconds().toString().padStart(2, '0');
+        const horaFormatada = `${horas.toString().padStart(2, '0')}:${minutos}:${segundos}`;
+        if (horaSpan) horaSpan.textContent = horaFormatada;
+
+        let turnoAtual = '';
+        if (horas >= 6 && horas < 12) {
+            turnoAtual = 'Manhã';
+            turnoSpan.className = "badge fs-6 p-2";
+        } else if (horas >= 12 && horas < 18) {
+            turnoAtual = 'Tarde';
+            turnoSpan.className = "badge fs-6 p-2";
+        } else {
+            turnoAtual = 'Noite';
+            turnoSpan.className = "badge fs-6 p-2";
+        }
+
+        if (turnoSpan) turnoSpan.textContent = turnoAtual;
+    }
+
+    atualizarRelogioETurno();       // Atualiza ao carregar
+    setInterval(atualizarRelogioETurno, 1000); // Atualiza a cada segundo
+});
+
 // Exportar funções
 window.agendamentos = {
     inicializar: inicializarAgendamentos,
