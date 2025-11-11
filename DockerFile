@@ -9,13 +9,13 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-RUN git clone https://github.com/MicaelBernardi/Trabalho_Docker.git ./
+RUN git clone https://github.com/CTISM-Prof-Henry/trab-final-spi-integer-s.git ./
 
-WORKDIR /app/Trabalho_POOW1Spring
+WORKDIR /app/Salas
 
 RUN mvn clean package -DskipTests
 
 VOLUME ["/var/log/app"]
 RUN mkdir -p /var/log/app
 
-ENTRYPOINT ["java", "-jar", "target/Trabalho_POOW1Spring-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "target/Salas-0.0.1-SNAPSHOT.jar"]
