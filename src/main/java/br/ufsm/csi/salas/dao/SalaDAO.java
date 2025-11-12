@@ -1,6 +1,6 @@
 package br.ufsm.csi.salas.dao;
 
-import br.ufsm.csi.salas.model.Sala;
+import br.ufsm.csi.salas.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -21,12 +21,6 @@ public class DashboardService {
         this.agendamentoDAO = new AgendamentoDAO();
     }
 
-    /**
-     * Retorna o turno atual baseado na hora do sistema
-     * 1 = Manhã (06:00 - 11:59)
-     * 2 = Tarde (12:00 - 17:59)
-     * 3 = Noite (18:00 - 23:59)
-     */
     public int getTurnoAtual() {
         LocalTime agora = LocalTime.now();
         if (agora.isBefore(LocalTime.of(12, 0))) {
@@ -38,9 +32,6 @@ public class DashboardService {
         }
     }
 
-    /**
-     * Retorna o nome do turno atual
-     */
     public String getNomeTurnoAtual() {
         int turno = getTurnoAtual();
         switch (turno) {
@@ -51,9 +42,6 @@ public class DashboardService {
         }
     }
 
-    /**
-     * Quantidade de salas em uso no turno atual
-     */
     public int getSalasEmUso() {
         LocalDate hoje = LocalDate.now();
         int turnoAtual = getTurnoAtual();
@@ -77,18 +65,12 @@ public class DashboardService {
         return 0;
     }
 
-    /**
-     * Quantidade de salas livres no turno atual
-     */
     public int getSalasLivres() {
         int totalSalas = salaDAO.listar().size();
         int salasEmUso = getSalasEmUso();
         return totalSalas - salasEmUso;
     }
 
-    /**
-     * IDs das salas em uso no turno atual (para mostrar status na tabela)
-     */
     public List<Integer> getSalasEmUsoIds() {
         List<Integer> salasEmUsoIds = new ArrayList<>();
         LocalDate hoje = LocalDate.now();
@@ -113,9 +95,6 @@ public class DashboardService {
         return salasEmUsoIds;
     }
 
-    /**
-     * Total de agendamentos para hoje
-     */
     public int getAgendamentosHoje() {
         LocalDate hoje = LocalDate.now();
 

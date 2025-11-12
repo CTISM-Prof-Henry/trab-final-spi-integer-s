@@ -1,4 +1,3 @@
-// === FILTROS DA TABELA ===
 function filtrarTabela() {
     const filtroCapacidade = parseInt(document.getElementById('capacidade-filter').value) || 0;
     const filtroTipo = document.getElementById('tipo-filter').value.toLowerCase().trim();
@@ -26,7 +25,6 @@ function filtrarTabela() {
     });
 }
 
-// === LIMPAR FILTROS ===
 function limparFiltros() {
     document.getElementById('capacidade-filter').value = '0';
     document.getElementById('tipo-filter').value = '';
@@ -34,7 +32,6 @@ function limparFiltros() {
     filtrarTabela();
 }
 
-// === ATUALIZAÇÃO DE HORA E TURNO ===
 function atualizarHoraETurno() {
     const horaSpan = document.getElementById("hora-atual");
     const turnoSpan = document.getElementById("turno-atual");
@@ -54,7 +51,6 @@ function atualizarHoraETurno() {
     if (turnoSpan) turnoSpan.textContent = turnoAtual;
 }
 
-// === INICIALIZAÇÃO ===
 function inicializarSalas() {
     const capacidadeFilter = document.getElementById('capacidade-filter');
     const tipoFilter = document.getElementById('tipo-filter');
@@ -64,13 +60,12 @@ function inicializarSalas() {
     if (tipoFilter) tipoFilter.addEventListener('change', filtrarTabela);
     if (statusFilter) statusFilter.addEventListener('change', filtrarTabela);
 
-    filtrarTabela(); // aplica o filtro logo ao carregar
+    filtrarTabela();
 
     atualizarHoraETurno();
     setInterval(atualizarHoraETurno, 1000);
 }
 
-// === CHAMAR AO CARREGAR ===
 document.addEventListener("DOMContentLoaded", inicializarSalas);
 
 window.salas = {

@@ -23,19 +23,19 @@
             </div>
             <div class="login-section d-flex align-items-center">
                 <div class="d-flex align-items-center">
-                    <a href="#" class="login-link text-decoration-none me-2"
-                       th:if="${usuarioLogado != null}"
-                       th:href="@{/logout}">
+                    <a th:if="${usuarioLogado != null}"
+                       th:href="@{/}"
+                       class="login-link text-decoration-none me-2">
                         logout
                     </a>
-                    <a href="#" class="login-link text-decoration-none me-2"
-                       th:unless="${usuarioLogado != null}"
-                       th:href="@{/login}">
+                    <a th:unless="${usuarioLogado != null}"
+                       th:href="@{/}"
+                       class="login-link text-decoration-none me-2">
                         login
                     </a>
                     <span class="login-status-indicator"
                           th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
-                          title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
+                          th:title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
                     </span>
                 </div>
             </div>
@@ -295,5 +295,31 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const dataInput = document.getElementById("data-filter");
+        if (!dataInput) return;
+
+        // Quando o usuário tentar selecionar uma data:
+        dataInput.addEventListener("change", function () {
+            const dataSelecionada = new Date(this.value);
+            const diaSemana = dataSelecionada.getUTCDay(); // 0 = Domingo
+
+            if (diaSemana === 0) {
+                alert("⚠️ Não é permitido agendar no domingo!");
+                this.value = ""; // limpa o campo
+            }
+        });
+
+        // Bloqueia o uso de setas do teclado para cair num domingo (opcional)
+        dataInput.addEventListener("input", function () {
+            const dataSelecionada = new Date(this.value);
+            if (dataSelecionada.getUTCDay() === 0) {
+                this.value = "";
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

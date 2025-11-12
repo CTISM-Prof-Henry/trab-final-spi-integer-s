@@ -26,17 +26,13 @@
                 <div class="d-flex align-items-center">
                     <a href="#" class="login-link text-decoration-none me-2"
                        th:if="${usuarioLogado != null}"
-                       th:href="@{/logout}">
-                        logout
-                    </a>
+                       th:href="@{/}">logout</a>
                     <a href="#" class="login-link text-decoration-none me-2"
                        th:unless="${usuarioLogado != null}"
-                       th:href="@{/login}">
-                        login
-                    </a>
+                       th:href="@{/}">login</a>
                     <span class="login-status-indicator"
                           th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
-                          title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
+                          th:title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
                     </span>
                 </div>
             </div>
@@ -50,15 +46,10 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/home}">início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/agendamento}">agendamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/sala}">salas</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/home}">início</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/agendamento}">agendamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/agendamento/novo}">agendar</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/sala}">salas</a></li>
                 </ul>
             </div>
         </div>
@@ -66,7 +57,7 @@
 </header>
 
 <main class="container my-4">
-    <div class="row justify-content-center g-4">
+    <div class="row justify-content-center g-4 mb-3">
         <div class="col-lg-3 col-md-6">
             <div class="card info-card shadow-sm">
                 <div class="card-body text-center">
@@ -101,35 +92,92 @@
         </div>
     </div>
 
-    <!-- Seção do Gráfico de Salas em Uso -->
-    <div class="text-center my-4 pt-3">
-        <h1 class="section-title">Salas em Uso</h1>
-    </div>
-    <div class="chart-section-container">
-        <div class="chart-filters d-flex justify-content-center align-items-center mb-3">
-            <label for="block-select" class="me-2 fw-bold">Bloco</label>
-            <select class="form-select" id="block-select" style="width: auto;">
-                <!-- CORREÇÃO: Sintaxe Thymeleaf simplificada -->
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-                <option value="F">F</option>
-                <option value="G">G</option>
-            </select>
+    <div class="content-box p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0" th:text="${displayMonth} + ' ' + ${displayYear}">Mês Ano</h4>
+            <h5 class="mb-0">Turno Atual: <span id="current-shift" class="badge bg-primary" th:text="${turnoAtual}">Turno</span></h5>
         </div>
-        <div class="chart-container">
-            <div class="y-axis-label">Tarde</div>
-            <div class="timeline">
-                <div class="usage-bar" style="left: 5%; width: 10%; background-color: #66c2a5;"
-                     th:title="'Salas em uso: ' + ${salasEmUso}"></div>
+
+        <div class="calendar-grid">
+            <!-- Cabeçalho -->
+            <div class="calendar-header-cell">Dom</div>
+            <div class="calendar-header-cell">Seg</div>
+            <div class="calendar-header-cell">Ter</div>
+            <div class="calendar-header-cell">Qua</div>
+            <div class="calendar-header-cell">Qui</div>
+            <div class="calendar-header-cell">Sex</div>
+            <div class="calendar-header-cell">Sáb</div>
+
+            <!-- Células -->
+            <div th:each="cell : ${calendarCells}"
+                 th:classappend="${cell.otherMonth} ? ' other-month' : ''"
+                 class="calendar-day">
+
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="day-number" th:text="${cell.dayNumber}">1</div>
+                    <div th:if="${#lists.size(cell.items) > 0}">
+                        <a href="#" class="small text-decoration-none"
+                           th:attr="data-bs-toggle='modal', data-bs-target=${'#modal-' + cell.date}">
+                            <i class="bi bi-eye-fill" title="Ver agendamentos"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="scheduled-items mt-2">
+                    <div th:each="it : ${cell.visibleItems}"
+                         class="scheduled-item"
+                         th:classappend="' turno-' + ${it.turno}"
+                         th:text="${it.descricao}"
+                         th:title="${it.descricao}">
+                    </div>
+
+                    <div th:if="${cell.moreCount > 0}" class="mt-1">
+                        <a href="#"
+                           th:attr="data-bs-toggle='modal', data-bs-target=${'#modal-' + cell.date}"
+                           class="more-link">
+                            <span class="more-badge" th:text="'+' + ${cell.moreCount}">+N</span>
+                            <span class="small text-muted">mais</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="text-center mt-2 chart-footer">
-            <a th:href="@{/agendamento}">clique para expandir</a>
+    </div>
+
+    <!-- Modais -->
+    <div th:each="cell : ${calendarCells}">
+        <div th:if="${#lists.size(cell.items) > 0}"
+             th:id="${'modal-' + cell.date}"
+             class="modal fade"
+             tabindex="-1"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:text="'Agendamentos - ' + ${#temporals.format(cell.date, 'dd/MM/yyyy')}">Agendamentos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            <li th:each="it : ${cell.items}" class="list-group-item d-flex justify-content-between align-items-center">
+                                <a th:href="@{'/agendamento/editar/' + ${it.id}}"
+                                   class="text-decoration-none w-100 d-flex justify-content-between align-items-center">
+                                    <span th:text="${it.descricao}"
+                                          th:classappend="' turno-' + ${it.turno}"
+                                          class="scheduled-item flex-grow-1 text-truncate"></span>
+                                    <i class="bi bi-pencil-square ms-2 text-primary"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>

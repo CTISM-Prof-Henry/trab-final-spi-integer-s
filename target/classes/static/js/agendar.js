@@ -1,5 +1,3 @@
-// scripts/agendar.js - SEM CONFIRMAÇÕES
-
 let isEditMode = false;
 
 function inicializarModoEdicao() {
@@ -146,11 +144,15 @@ function verificarDisponibilidade() {
     const data = obterDataSelecionada();
     const turnoSelect = document.getElementById("turnoSelect");
     const disponibilidadeDiv = document.getElementById("disponibilidade");
+    const botaoAgendar = document.querySelector("button[type='submit']");
 
     if (!salaSelect || !turnoSelect || !disponibilidadeDiv) return;
 
     const salaId = salaSelect.value;
     const turno = turnoSelect.value;
+
+    // 🔒 Bloqueia o botão enquanto verifica
+    if (botaoAgendar) botaoAgendar.disabled = true;
 
     if (!salaId || !data || !turno || turno === "0") {
         disponibilidadeDiv.innerHTML = '<span class="text-muted">Selecione sala, data e turno para verificar</span>';
@@ -175,12 +177,30 @@ function verificarDisponibilidade() {
             if (data && typeof data === 'object' && ('disponivel' in data)) {
                 disponivel = Boolean(data.disponivel);
             }
-            disponibilidadeDiv.innerHTML = disponivel
-                ? `<span class="text-success"><i class="bi bi-check-circle-fill"></i> Sala disponível para este turno!</span>`
-                : `<span class="text-danger"><i class="bi bi-x-circle-fill"></i> Sala indisponível para este turno</span>`;
+
+            if (disponivel) {
+                disponibilidadeDiv.innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill"></i> Sala disponível para este turno!</span>`;
+                if (botaoAgendar) {
+                    botaoAgendar.disabled = false;
+                    botaoAgendar.classList.remove("btn-secondary");
+                    botaoAgendar.classList.add("btn-custom-orange");
+                }
+            } else {
+                disponibilidadeDiv.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill"></i> Sala indisponível para este turno</span>`;
+                if (botaoAgendar) {
+                    botaoAgendar.disabled = true;
+                    botaoAgendar.classList.remove("btn-custom-orange");
+                    botaoAgendar.classList.add("btn-secondary");
+                }
+            }
         })
         .catch(() => {
             disponibilidadeDiv.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Erro ao verificar disponibilidade</span>`;
+            if (botaoAgendar) {
+                botaoAgendar.disabled = true;
+                botaoAgendar.classList.remove("btn-custom-orange");
+                botaoAgendar.classList.add("btn-secondary");
+            }
         });
 }
 
@@ -241,7 +261,6 @@ function prepararEnvioRecorrente() {
         return false;
     }
 
-    // 🚀 Nenhuma confirmação — envia direto
     console.log("Envio automático do agendamento...");
     return true;
 }
@@ -282,6 +301,26 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarModoEdicao();
     configurarEventListenersAgendar();
     inicializarAgendar();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const dataInput = document.getElementById("dataInput");
+    if (!dataInput) return;
+
+    dataInput.addEventListener("change", function () {
+        const dataSelecionada = new Date(this.value);
+        const diaSemana = dataSelecionada.getUTCDay();
+
+        if (diaSemana === 0) {
+            this.value = "";
+            const disponibilidadeDiv = document.getElementById("disponibilidade");
+            if (disponibilidadeDiv) {
+                disponibilidadeDiv.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> Agendamentos não são permitidos aos domingos</span>`;
+            }
+        } else {
+            verificarDisponibilidade(); // atualiza status se a data for válida
+        }
+    });
 });
 
 window.agendar = {

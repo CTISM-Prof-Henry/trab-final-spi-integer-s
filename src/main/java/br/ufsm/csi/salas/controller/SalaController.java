@@ -21,10 +21,8 @@ public class SalaController {
     private final SalaService salaService;
     private final DashboardService dashboardService;
 
-    // Lista de blocos disponíveis
     private final List<String> blocos = Arrays.asList("A", "B", "C", "D", "E", "F", "G");
 
-    // Lista de tipos de sala disponíveis
     private final List<String> tiposSala = Arrays.asList(
             "Sala de Aula", "Laboratório", "Auditório", "Sala de Reunião",
             "Sala de Estudo", "Oficina", "Outros"
@@ -35,14 +33,11 @@ public class SalaController {
         this.dashboardService = dashboardService;
     }
 
-    // Página principal - LISTAR SALAS
     @GetMapping
     public String listarSalas(Model model) {
-        // Dados das salas
         List<Sala> salas = salaService.listar();
         model.addAttribute("salas", salas);
 
-        // Dados dinâmicos para os cards
         int salasEmUso = dashboardService.getSalasEmUso();
         int salasLivres = dashboardService.getSalasLivres();
         String turnoAtual = dashboardService.getNomeTurnoAtual();
@@ -52,10 +47,8 @@ public class SalaController {
         model.addAttribute("turnoAtual", turnoAtual);
         model.addAttribute("salasEmUsoIds", dashboardService.getSalasEmUsoIds());
 
-        // Dados para filtros
         model.addAttribute("blocos", blocos);
 
-        // Extrair tipos únicos de sala
         List<String> tiposUnicos = salas.stream()
                 .map(Sala::getTipo)
                 .distinct()
@@ -65,7 +58,6 @@ public class SalaController {
         return "pages/salas";
     }
 
-    // Página de CADASTRO - GET
     @GetMapping("/cadastro")
     public String mostrarFormularioCadastro(Model model) {
         if (!model.containsAttribute("sala")) {
@@ -76,7 +68,6 @@ public class SalaController {
         return "pages/cadastro-sala";
     }
 
-    // Processar CADASTRO - POST
     @PostMapping("/cadastrar")
     public String cadastrarSala(@Valid @ModelAttribute("sala") Sala sala,
                                 BindingResult result,
@@ -94,7 +85,6 @@ public class SalaController {
         return "redirect:/sala";
     }
 
-    // Página de EDIÇÃO - GET
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEdicao(@PathVariable("id") Integer id, Model model) {
         Sala sala = salaService.buscar(id);
@@ -109,7 +99,6 @@ public class SalaController {
         return "pages/cadastro-sala";
     }
 
-    // Processar EDIÇÃO - POST
     @PostMapping("/editar")
     public String editarSala(@Valid @ModelAttribute("sala") Sala sala,
                              BindingResult result,
@@ -127,7 +116,6 @@ public class SalaController {
         return "redirect:/sala";
     }
 
-    // EXCLUIR sala
     @GetMapping("/excluir/{id}")
     public String excluirSala(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         String mensagem = salaService.excluir(id);

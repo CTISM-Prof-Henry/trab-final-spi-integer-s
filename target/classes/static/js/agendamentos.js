@@ -1,12 +1,8 @@
-// scripts/agendamentos.js
-
-// === FUNÇÕES GLOBAIS ===
 function formatarData(dataISO) {
     const data = new Date(dataISO);
     return data.toLocaleDateString('pt-BR');
 }
 
-// === INICIALIZAÇÃO DA PÁGINA AGENDAMENTOS ===
 function inicializarAgendamentos() {
     const hoje = new Date().toISOString().split('T')[0];
     const dataAtualElement = document.getElementById('data-atual');
@@ -15,7 +11,6 @@ function inicializarAgendamentos() {
         dataAtualElement.textContent = formatarData(hoje);
     }
 
-    // Preencher filtros com valores atuais (se existirem)
     const urlParams = new URLSearchParams(window.location.search);
     const dataFiltro = urlParams.get('data');
     const statusFiltro = urlParams.get('status');
@@ -32,7 +27,6 @@ function inicializarAgendamentos() {
         document.getElementById('bloco-filter').value = blocoFiltro;
     }
 
-    // Auto-refresh a cada 2 minutos (opcional)
     setTimeout(() => {
         window.location.reload();
     }, 120000);
@@ -69,7 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(atualizarRelogioETurno, 1000); // Atualiza a cada segundo
 });
 
-// Exportar funções
 window.agendamentos = {
     inicializar: inicializarAgendamentos,
     formatarData: formatarData

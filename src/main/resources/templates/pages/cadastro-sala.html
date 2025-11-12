@@ -25,19 +25,19 @@
             </div>
             <div class="login-section d-flex align-items-center">
                 <div class="d-flex align-items-center">
-                    <a href="#" class="login-link text-decoration-none me-2"
-                       th:if="${usuarioLogado != null}"
-                       th:href="@{/logout}">
+                    <a th:if="${usuarioLogado != null}"
+                       th:href="@{/}"
+                       class="login-link text-decoration-none me-2">
                         logout
                     </a>
-                    <a href="#" class="login-link text-decoration-none me-2"
-                       th:unless="${usuarioLogado != null}"
-                       th:href="@{/login}">
+                    <a th:unless="${usuarioLogado != null}"
+                       th:href="@{/}"
+                       class="login-link text-decoration-none me-2">
                         login
                     </a>
                     <span class="login-status-indicator"
                           th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
-                          title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
+                          th:title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
                     </span>
                 </div>
             </div>
@@ -50,15 +50,10 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/agendamento}">agendamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" th:href="@{/sala}">salas</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/home}">início</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/agendamento}">agendamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/agendamento/novo}">agendar</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" th:href="@{/sala}">salas</a></li>
                 </ul>
             </div>
         </div>
