@@ -22,20 +22,6 @@
                 <h1>SALAS</h1>
                 <span>Agendamento</span>
             </div>
-            <div class="login-section d-flex align-items-center">
-                <div class="d-flex align-items-center">
-                    <a href="#" class="login-link text-decoration-none me-2"
-                       th:if="${usuarioLogado != null}"
-                       th:href="@{/}">logout</a>
-                    <a href="#" class="login-link text-decoration-none me-2"
-                       th:unless="${usuarioLogado != null}"
-                       th:href="@{/}">login</a>
-                    <span class="login-status-indicator"
-                          th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
-                          th:title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
-                    </span>
-                </div>
-            </div>
         </div>
     </div>
 
