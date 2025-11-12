@@ -24,3 +24,5 @@ Acesse a documentação e tutoriais de uso do projeto pelo link:
 Arquivo Docker-Compose para download:
 
 * [docker-compose.yaml](https://github.com/user-attachments/files/23468586/docker-compose.yaml)
+
+* [init.sql](https://github.com/user-attachments/files/23505097/init.sql)
