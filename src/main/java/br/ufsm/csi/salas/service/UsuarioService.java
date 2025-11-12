@@ -2,9 +2,11 @@ package br.ufsm.csi.salas.service;
 
 import br.ufsm.csi.salas.dao.UsuarioDAO;
 import br.ufsm.csi.salas.model.Usuario;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UsuarioService {
 
     private static final UsuarioDAO dao = new UsuarioDAO();

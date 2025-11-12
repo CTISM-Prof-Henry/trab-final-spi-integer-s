@@ -1,83 +1,294 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendamentos - Salas</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Estilos Personalizados -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
+    <script th:src="@{/js/main.js}" defer></script>
+    <script th:src="@{/js/agendamentos.js}" defer></script>
 </head>
 <body>
-    <header>
-        <!-- Cabeçalho (igual em todas as páginas) -->
-        <div class="navbar-top">
-            <div class="container-fluid d-flex align-items-center justify-content-between">
-                <div class="navbar-brand-container"><a class="navbar-brand" href="#"><i class="bi bi-door-open"></i></a></div>
-                <div class="centered-title-container text-center"><h1>SALAS</h1><span>Agendamento</span></div>
-                <div class="login-section d-flex align-items-center"><a href="#">login</a><span class="login-status-indicator"></span></div>
+<header>
+    <div class="navbar-top">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="navbar-brand-container">
+                <a class="navbar-brand" th:href="@{/home}">
+                    <i class="bi bi-door-open"></i>
+                </a>
             </div>
-        </div>
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="mainNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="home">início</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">locações</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="agendamento">agendamentos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="sala">salas</a></li>
-                    </ul>
-                </div>
+            <div class="centered-title-container text-center">
+                <h1>SALAS</h1>
+                <span>Agendamento</span>
             </div>
-        </nav>
-    </header>
-
-    <main class="container my-4">
-        <!-- Cards de Informação e Ação -->
-        <div class="row justify-content-center g-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="card info-card shadow-sm">
-                    <div class="card-body">
-                        <h1 class="fw-bold text-success mb-0">6789</h1>
-                        <p class="card-subtitle text-body-secondary mt-2">Concluídos</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card info-card shadow-sm">
-                    <div class="card-body">
-                        <h1 class="fw-bold text-info mb-0">37</h1>
-                        <p class="card-subtitle text-body-secondary mt-2">Em Andamento</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card action-card shadow-sm">
-                    <a href="selecionar-sala.html" style="text-decoration: none;">
-                    <div class="card-body">
-                        <i class="bi bi-plus-circle"></i>
-                        <p class="card-subtitle text-body-secondary mt-2 fw-bold">Agendar</p>
-                    </div>
+            <div class="login-section d-flex align-items-center">
+                <div class="d-flex align-items-center">
+                    <a th:if="${usuarioLogado != null}"
+                       th:href="@{/}"
+                       class="login-link text-decoration-none me-2">
+                        logout
                     </a>
+                    <a th:unless="${usuarioLogado != null}"
+                       th:href="@{/}"
+                       class="login-link text-decoration-none me-2">
+                        login
+                    </a>
+                    <span class="login-status-indicator"
+                          th:classappend="${usuarioLogado != null} ? 'logged-in' : 'logged-out'"
+                          th:title="${usuarioLogado != null} ? 'Usuário logado' : 'Usuário desconectado'">
+                    </span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Filtros e Tabela -->
-        <div class="content-box mt-5">
-            <div class="content-box-placeholder mb-4">
-                <p class="mb-0">filtros para seleção específica</p>
-            </div>
-            <div class="content-box-placeholder">
-                <p class="mb-0">tabela mostrando agendamentos ocorrendo hoje(padrão)</p>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-bottom">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/home}">início</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/agendamento}">agendamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/agendamento/novo}">agendar</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/sala}">salas</a></li>
+                </ul>
             </div>
         </div>
-    </main>
+    </nav>
+</header>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<main class="container my-4">
+    <!-- Mensagens -->
+    <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${mensagemSucesso}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${mensagemErro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Cards -->
+    <div class="row justify-content-center g-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h1 class="fw-bold text-primary mb-0" th:text="${totalAbertos}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">Abertos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h1 class="fw-bold text-warning mb-0" th:text="${totalEmUso}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">Em Uso</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h1 class="fw-bold text-success mb-0" th:text="${totalFinalizados}">0</h1>
+                    <p class="card-subtitle text-body-secondary mt-2">Finalizados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card action-card shadow-sm border-0">
+                <a th:href="@{/agendamento/novo}" class="text-decoration-none">
+                    <div class="card-body text-center">
+                        <i class="bi bi-plus-circle display-6 text-primary"></i>
+                        <p class="card-subtitle text-body-secondary mt-2 fw-bold">Novo Agendamento</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de Turno Atual -->
+    <div class="text-center mb-3 mt-3">
+        <span class="badge bg-info fs-6 p-2">
+            <i class="bi bi-clock"></i>
+            Turno atual: <span id="turno-atual" th:text="${turnoAtual}">Manhã</span>
+            - <span id="hora-atual"></span>
+        </span>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mt-4 border-0 shadow-sm">
+        <div class="card-header bg-light"><h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros</h5></div>
+        <div class="card-body">
+            <form th:action="@{/agendamento}" method="get" id="filtros-form">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="data-filter" class="col-form-label fw-bold">Data:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="date" class="form-control" id="data-filter" name="data"
+                               th:value="${param.data}" />
+                    </div>
+
+                    <div class="col-auto">
+                        <label for="status-filter" class="col-form-label fw-bold">Status:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="status-filter" name="status">
+                            <option value="" th:selected="${param.status == null}">Todos</option>
+                            <option value="1" th:selected="${param.status == '1'}">Aberto</option>
+                            <option value="2" th:selected="${param.status == '2'}">Em Uso</option>
+                            <option value="3" th:selected="${param.status == '3'}">Finalizado</option>
+                        </select>
+                    </div>
+
+                    <div class="col-auto">
+                        <label for="bloco-filter" class="col-form-label fw-bold">Bloco:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="bloco-filter" name="bloco">
+                            <option value="" th:selected="${param.bloco == null}">Todos</option>
+                            <option th:each="bloco : ${blocos}"
+                                    th:value="${bloco}"
+                                    th:text="${bloco}"
+                                    th:selected="${param.bloco == bloco}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Aplicar</button>
+                        <a th:href="@{/agendamento}" class="btn btn-outline-secondary ms-2">
+                            <i class="bi bi-arrow-clockwise"></i> Limpar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="card mt-3 border-0 shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Agendamentos</h5>
+            <span class="badge bg-primary" th:text="'Total: ' + ${#lists.size(agendamentos)}">Total: 0</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Sala</th>
+                        <th>Bloco</th>
+                        <th>Data</th>
+                        <th>Turno</th>
+                        <th>Usuário</th>
+                        <th>Status</th>
+                        <th width="180">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="agendamento : ${agendamentos}">
+                        <td th:text="${agendamento.id}">#</td>
+                        <td th:text="${agendamento.sala?.tipo ?: '-'}"></td>
+                        <td th:text="${agendamento.sala?.bloco ?: '-'}"></td>
+                        <td th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}">01/01/2025</td>
+                        <td>
+                            <span th:switch="${agendamento.turno}">
+                                <span th:case="1" class="badge bg-primary">Manhã</span>
+                                <span th:case="2" class="badge bg-warning text-dark">Tarde</span>
+                                <span th:case="3" class="badge bg-dark">Noite</span>
+                                <span th:case="*" class="badge bg-secondary">-</span>
+                            </span>
+                        </td>
+                        <td th:text="${agendamento.usuario?.nome ?: '-'}"></td>
+                        <td>
+                            <span th:switch="${agendamento.status}">
+                                <span th:case="1" class="badge bg-primary">Aberto</span>
+                                <span th:case="2" class="badge bg-warning text-dark">Em Uso</span>
+                                <span th:case="3" class="badge bg-success">Finalizado</span>
+                                <span th:case="*" class="badge bg-secondary">-</span>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+
+                                <!-- Botão de Editar -->
+                                <a th:if="${agendamento.id != null and agendamento.status != 3}"
+                                   th:href="@{|/agendamento/editar/${agendamento.id}|}"
+                                   class="btn btn-outline-primary"
+                                   title="Editar Agendamento">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <!-- Quando estiver Aberto -->
+                                <a th:if="${agendamento.status == 1}"
+                                   th:href="@{'/agendamento/em-uso/' + ${agendamento.id}}"
+                                   class="btn btn-warning"
+                                   title="Colocar em uso">
+                                    <i class="bi bi-play-circle"></i>
+                                </a>
+
+                                <!-- Quando estiver Em Uso -->
+                                <a th:if="${agendamento.status == 2}"
+                                   th:href="@{'/agendamento/finalizar/' + ${agendamento.id}}"
+                                   class="btn btn-success"
+                                   title="Finalizar Agendamento">
+                                    <i class="bi bi-check-circle"></i>
+                                </a>
+
+                                <!-- Botão Excluir -->
+                                <a th:if="${agendamento.id != null and agendamento.status != 3}"
+                                   th:href="@{|/agendamento/excluir/${agendamento.id}|}"
+                                   class="btn btn-outline-danger"
+                                   title="Excluir Agendamento">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+
+                                <!-- Agendamento sem ID -->
+                                <span th:if="${agendamento.id == null}"
+                                      class="text-muted small"
+                                      title="Agendamento sem ID">
+                                    <i class="bi bi-exclamation-triangle"></i> Sem ID
+                                </span>
+
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(agendamentos)}">
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                            Nenhum agendamento encontrado
+                            <br>
+                            <a th:href="@{/agendamento/novo}" class="btn btn-primary mt-3">
+                                <i class="bi bi-plus-circle"></i> Fazer Primeiro Agendamento
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const span = document.getElementById("data-atual");
+        if (span) {
+            const hoje = new Date();
+            span.textContent = hoje.toLocaleDateString('pt-BR', {
+                weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
+            });
+        }
+    });
+</script>
 </body>
 </html>
